@@ -102,6 +102,8 @@ py -3 -m pip install --upgrade robotpy
 py -3 -m robotpy sync
 ```
 
+> I got a lot of issues with my python packages since they were previously installed globally. If you encounter any issues with the install, try running this command `pym pip freeze | ForEach-Object { pym pip uninstall -y $_ }` to uninstall all of your packages. Then, rerun the installation steps above.
+
 **For Linux and macOS**
 
 ```bash
