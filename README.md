@@ -190,8 +190,8 @@ To configure the ruff VsCode extension, follow these steps:
 
 ```json
 {
+  "editor.formatOnSave": true,
   "[python]": {
-    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.organizeImports": true
     },
@@ -199,6 +199,8 @@ To configure the ruff VsCode extension, follow these steps:
   }
 }
 ```
+
+> Note: These formatting settings are scoped to this workspace only.
 
 ## Using the Lab PCs
 
@@ -222,7 +224,16 @@ git config user.email "$EMAIL"
 echo "Git user has been set to: $USERNAME ($EMAIL)"
 ```
 
-3. In order to change VsCode's GitHub credentials, use the script by running the following command **(NOTE: must be run in a `bash` terminal)**:
+1. In order to change VsCode's GitHub credentials, use the script by running the following command:
+
+Windows (PowerShell):
+```ps1
+bash .\switch-gituser\{THE NAME OF YOUR FILE}.sh
+```
+
+> In order to use this option you need to install git (and Git Bash). Make sure to add `C:\Program Files\git\bin\` to your Windows PATH.
+
+Windows (GitBash):
 
 ```bash
 ./switch-gituser/{THE NAME OF YOUR FILE}.sh
@@ -232,11 +243,11 @@ echo "Git user has been set to: $USERNAME ($EMAIL)"
 To view all available robotpy commands, use the following command:
 
 ```bash
-# Linux
-python3 -m robotpy
-
 # Windows
 py -3 -m robotpy
+
+# Linux
+python3 -m robotpy
 ```
 
 > You can pass the `--help` argument to see more information about the subcommand.
@@ -244,11 +255,11 @@ py -3 -m robotpy
 > For example, to see help for the sim command you can do the following:
 >
 > ```bash
-> # Linux
-> python3 -m robotpy sim --help
->
 > # Windows
 > py -3 -m robotpy sim --help
+> 
+> # Linux
+> python3 -m robotpy sim --help
 > ```
 
 ### Running Robot Code
@@ -305,7 +316,7 @@ ruff check .
 
 ### Using the Driver Station
 
-This [guide](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-4/running-test-program.html) shows you how to setup the frc driver station in order to run your test programs.
+This [guide](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-4/running-test-program.html) shows you how to setup the FRC driver station in order to run your test programs.
 
 ### Deploying Code to Robot
 
@@ -373,7 +384,7 @@ python3 -m pip install coverage
 
 #### Test Coverage
 
-To run the ‘test’ command to run unit tests, use:
+To run the `test` command to run unit tests, use:
 
 ```bash
 # Windows
@@ -425,7 +436,7 @@ In order to complete these steps, you will need to [install the FRC Game Tools](
 
 ### RoboRIO Image Update
 
-The frc 2024 season will require all RoboRIOs to be flashed with a new image. To update the RoboRIOs, please follow the [guide](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-3/index.html) depending on what version of RIO you have.
+The FRC 2025 season will require all RoboRIOs to be flashed with a new image. To update the RoboRIOs, please follow the [guide](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-3/index.html) depending on what version of RIO you have.
 
 [**RoboRIO 2.0**](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-3/roborio2-imaging.html)
 
@@ -436,10 +447,6 @@ The frc 2024 season will require all RoboRIOs to be flashed with a new image. To
 [**RoboRIO 1.0**](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-3/imaging-your-roborio.html)
 
 <img src="./static/roborio_1.png" width="400" height="400">
-
-### Install RobotPY on RoboRIO
-
-Follow [this guide](https://robotpy.readthedocs.io/en/stable/install/robot.html) to install python and RobotPY on the RobotRIO.
 
 ### Programming the Radio
 
