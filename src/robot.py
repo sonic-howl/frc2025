@@ -1,10 +1,18 @@
 import wpilib
 import wpilib.drive
+from commands2 import CommandScheduler
 
-from shuffleboard import addDeployArtifacts
+from RobotContainer import RobotContainer
+from Shuffleboard import addDeployArtifacts
 
 
 class MyRobot(wpilib.TimedRobot):
+  m_robotContainer: RobotContainer
+
+  def __init__(self):
+    super().__init__()
+    self.m_robotContainer = RobotContainer()
+
   def robotInit(self):
     """
     This function is called upon program startup and
@@ -12,7 +20,9 @@ class MyRobot(wpilib.TimedRobot):
     """
     addDeployArtifacts()
 
-    self.controller = wpilib.XboxController(0)
+  def robotPeriodic(self):
+    """This function is called periodically every ~20ms."""
+    CommandScheduler.getInstance().run()
 
   def autonomousInit(self):
     """This function is run once each time the robot enters autonomous mode."""
@@ -28,6 +38,7 @@ class MyRobot(wpilib.TimedRobot):
 
   def testInit(self):
     """This function is called once each time the robot enters test mode."""
+    CommandScheduler.getInstance().cancelAll()
 
   def testPeriodic(self):
     """This function is called periodically during test mode."""
