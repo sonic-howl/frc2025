@@ -32,14 +32,13 @@ To get started, install python version 3.12.8 from these links and run the insta
 
 **[Windows](https://www.python.org/ftp/python/3.12.8/python-3.12.8-amd64.exe)**
 
-> **Installation Steps**
->
-> 1. Select Modify
-> 2. Click Next
-> 3. Select `Associate files with Python` then click install
-> 4. After installing you can check if everything worked by:
->   - Opening a terminal (Press the windows key and search for `cmd`)
->   - Using the following command to check the version of python installed on your system: `py --version`
+**Installation Steps:**
+1. Select Modify
+2. Click Next
+3. Select `Associate files with Python` then click install
+4. After installing you can check if everything worked by:
+     - Opening a terminal (Press the windows key and search for `cmd`)
+     - Using the following command to check the version of python installed on your system: `py --version`
 
 ---
   
