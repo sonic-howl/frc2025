@@ -24,8 +24,7 @@ Once installed, you'll have access to these tools:
 
 To install the 2025 WPILib programming environment for python, either follow [this guide](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/python-setup.html).
 
-**If you're unsure of what options to choose during the install, follow these steps:
-**
+**If you're unsure of what options to choose during the install, follow these steps:**
 #### Installing Python
 
 To get started, install python version 3.12.8 from these links and run the installer:
