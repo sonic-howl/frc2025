@@ -134,6 +134,8 @@ Through the season we're going to be typing `py -3 -m` A LOT. In order to simpli
 3. Open the file by using `code $PROFILE`
 4. Insert and save this block of code in the file:
     ```ps1
+    Set-Alias cl clear
+    
     Function pym {
         py -3 -m $args
     }
