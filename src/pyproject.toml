@@ -1,0 +1,91 @@
+#
+# Use this configuration file to control what RobotPy packages are installed
+# on your RoboRIO
+#
+
+[tool.robotpy]
+
+# Version of robotpy this project depends on
+robotpy_version = "2025.1.1.1"
+
+# Which extra RobotPy components should be installed
+# -> equivalent to `pip install robotpy[extra1, ...]
+robotpy_extras = [
+    # "all",
+    # "apriltag",
+    # "commands2",
+    # "cscore",
+    # "navx",
+    # "pathplannerlib",
+    # "phoenix6",
+    # "rev",
+    # "romi",
+    # "sim",
+    # "xrp",
+]
+
+# Other pip packages to install
+requires = []
+
+[tool.ruff]
+# Uncomment if you want to specify what to lint / format
+# include = ["pyproject.toml", "src/**/*.py", "scripts/**/*.py"]
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+
+line-length = 88
+indent-width = 2
+show-fixes = true
+
+# Assume Python 3.12
+target-version = "py312"
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default. (These are linting rules. See all of them at: https://docs.astral.sh/ruff/rules/)
+select = ["E4", "E7", "E9", "F"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Use double quotes for strings.
+quote-style = "double"
+# Indent with spaces, rather than tabs.
+indent-style = "space"
+# Respect magic trailing commas.
+skip-magic-trailing-comma = false
+# Automatically detect the appropriate line ending.
+line-ending = "auto"
