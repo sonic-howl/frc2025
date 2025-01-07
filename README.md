@@ -1,7 +1,9 @@
-# frc2024
+# FRC 2025
 
-TODO: Status Badges
-| Branch | Status |
+| Branch  | Status                                                                                                                                                                           |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| main    | [![CI](https://github.com/sonic-howl/frc2025/actions/workflows/integrate.yaml/badge.svg?branch=main)](https://github.com/sonic-howl/frc2025/actions/workflows/integrate.yaml)    |
+| develop | [![CI](https://github.com/sonic-howl/frc2025/actions/workflows/integrate.yaml/badge.svg?branch=develop)](https://github.com/sonic-howl/frc2025/actions/workflows/integrate.yaml) |
 
 ## Getting started
 
