@@ -1,6 +1,4 @@
 # FRC 2025
-## Planning
-[Miro - Gantt Chart](https://miro.com/app/board/uXjVLLV_LVY=/?moveToWidget=3458764612561287452&cot=14)
 
 | Branch  | Status                                                                                                                                                                           |
 | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -8,6 +6,7 @@
 | develop | [![CI](https://github.com/sonic-howl/frc2025/actions/workflows/integrate.yaml/badge.svg?branch=develop)](https://github.com/sonic-howl/frc2025/actions/workflows/integrate.yaml) |
 
 - [FRC 2025](#frc-2025)
+  - [Planning](#planning)
   - [Using the Lab PCs](#using-the-lab-pcs)
   - [Build and Deploy Commands](#build-and-deploy-commands)
     - [Running Robot Code](#running-robot-code)
@@ -33,6 +32,9 @@
   - [Configuring Hardware](#configuring-hardware)
     - [RoboRIO Image Update](#roborio-image-update)
     - [Programming the Radio](#programming-the-radio)
+
+## Planning
+[Miro - Gantt Chart](https://miro.com/app/board/uXjVLLV_LVY=/?moveToWidget=3458764612561287452&cot=14)
 
 ## Using the Lab PCs
 
