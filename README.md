@@ -32,6 +32,7 @@
   - [Configuring Hardware](#configuring-hardware)
     - [RoboRIO Image Update](#roborio-image-update)
     - [Programming the Radio](#programming-the-radio)
+  - [Useful Links](#useful-links)
 
 ## Planning
 [Miro - Gantt Chart](https://miro.com/app/board/uXjVLLV_LVY=/?moveToWidget=3458764612561287452&cot=14)
@@ -421,3 +422,7 @@ The FRC 2025 season will require all RoboRIOs to be flashed with a new image. To
 ### Programming the Radio
 
 Similar to the RoboRIO, the radio used to communicate with the bot must also be flashed with the latest firmware. Follow [this guide](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-3/radio-programming.html) to do so.
+
+## Useful Links
+
+- **Command Based Swerve Drive Python Code (By epanov1602):** https://github.com/epanov1602/CommandRevSwerve
