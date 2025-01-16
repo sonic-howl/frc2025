@@ -1,17 +1,16 @@
+import typing
+
 import wpilib
 import wpilib.drive
-from commands2 import CommandScheduler
+from commands2 import Command, CommandScheduler, TimedCommandRobot
 
-from RobotContainer import RobotContainer
-from Shuffleboard import addDeployArtifacts
+from robotcontainer import RobotContainer
+from shuffleboard import addDeployArtifacts
 
 
-class MyRobot(wpilib.TimedRobot):
-  m_robotContainer: RobotContainer
-
-  def __init__(self):
-    super().__init__()
-    self.m_robotContainer = RobotContainer()
+class MyRobot(TimedCommandRobot):
+  autonomousCommand: typing.Optional[Command] = None
+  testCommand: typing.Optional[Command] = None
 
   def robotInit(self):
     """
@@ -19,6 +18,7 @@ class MyRobot(wpilib.TimedRobot):
     should be used for any initialization code.
     """
     addDeployArtifacts()
+    self.robotContainer = RobotContainer()
 
   def robotPeriodic(self):
     """This function is called periodically every ~20ms."""
@@ -26,12 +26,18 @@ class MyRobot(wpilib.TimedRobot):
 
   def autonomousInit(self):
     """This function is run once each time the robot enters autonomous mode."""
+    self.autonomousCommand = self.robotContainer.getAutonomousCommand()
+
+    if self.autonomousCommand:
+      self.autonomousCommand.schedule()
 
   def autonomousPeriodic(self):
     """This function is called periodically during autonomous."""
 
   def teleopInit(self):
     """This function is called once each time the robot enters teleoperated mode."""
+    if self.autonomousCommand:
+      self.autonomousCommand.cancel()
 
   def teleopPeriodic(self):
     """This function is called periodically during teleoperated mode."""
@@ -39,6 +45,12 @@ class MyRobot(wpilib.TimedRobot):
   def testInit(self):
     """This function is called once each time the robot enters test mode."""
     CommandScheduler.getInstance().cancelAll()
+
+    # Can be used to test specific commands
+    self.testCommand = self.robotContainer.getTestCommand()
+
+    if self.testCommand is not None:
+      self.testCommand.schedule()
 
   def testPeriodic(self):
     """This function is called periodically during test mode."""
