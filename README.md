@@ -6,6 +6,7 @@
 | develop | [![CI](https://github.com/sonic-howl/frc2025/actions/workflows/integrate.yaml/badge.svg?branch=develop)](https://github.com/sonic-howl/frc2025/actions/workflows/integrate.yaml) |
 
 - [FRC 2025](#frc-2025)
+  - [Planning](#planning)
   - [Using the Lab PCs](#using-the-lab-pcs)
   - [Build and Deploy Commands](#build-and-deploy-commands)
     - [Running Robot Code](#running-robot-code)
@@ -31,6 +32,9 @@
   - [Configuring Hardware](#configuring-hardware)
     - [RoboRIO Image Update](#roborio-image-update)
     - [Programming the Radio](#programming-the-radio)
+
+## Planning
+[Miro - Gantt Chart](https://miro.com/app/board/uXjVLLV_LVY=/?moveToWidget=3458764612561287452&cot=14)
 
 ## Using the Lab PCs
 
@@ -293,7 +297,7 @@ py -3 -m pip install --upgrade robotpy
 py -3 -m robotpy sync
 ```
 
-> I got a lot of issues with my python packages since they were previously installed globally. If you encounter any issues with the install, try running this command `pym pip freeze | ForEach-Object { pym pip uninstall -y $_ }` to uninstall all of your packages. Then, rerun the installation steps above.
+> I got a lot of issues with my python packages since they were previously installed globally. If you encounter any issues with the install, try running this command `py -3 -m pip freeze | ForEach-Object { py -3 -m pip uninstall -y $_ }` to uninstall all of your packages. Then, rerun the installation steps above.
 
 **For Linux and macOS**
 
