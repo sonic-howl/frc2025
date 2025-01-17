@@ -1,3 +1,4 @@
+import phoenix6
 import wpilib
 import wpilib.drive
 
@@ -11,7 +12,7 @@ class MyRobot(wpilib.TimedRobot):
     should be used for any initialization code.
     """
     addDeployArtifacts()
-
+    talon = phoenix6.hardware.TalonFX(4)
     self.controller = wpilib.XboxController(0)
 
   def autonomousInit(self):
