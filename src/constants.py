@@ -4,3 +4,4 @@ class Constants:
 
 class ControllerConstants:
   kDriverControllerPort = 0
+  kOperatorControllerPort = 1
