@@ -7,6 +7,7 @@
 
 - [FRC 2025](#frc-2025)
   - [Planning](#planning)
+  - [Useful Resources](#useful-resources)
   - [Using the Lab PCs](#using-the-lab-pcs)
   - [Build and Deploy Commands](#build-and-deploy-commands)
     - [Running Robot Code](#running-robot-code)
@@ -35,6 +36,10 @@
 
 ## Planning
 [Miro - Gantt Chart](https://miro.com/app/board/uXjVLLV_LVY=/?moveToWidget=3458764612561287452&cot=14)
+
+## Useful Resources
+
+- RobotPy Example Repository: https://github.com/robotpy/examples
 
 ## Using the Lab PCs
 
