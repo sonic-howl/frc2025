@@ -1,121 +1,106 @@
-import math
+from phoenix6 import configs, controls, hardware
+from rev import SparkBase, SparkLowLevel, SparkMax
+from wpimath.geometry import Rotation2d
+from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
+from wpimath.units import radiansToDegrees
 
-import wpilib
-import wpimath.controller
-import wpimath.geometry
-import wpimath.kinematics
-import wpimath.trajectory
-
+from config import Config
 from constants import SwerveModuleConstants
 
 
 class SwerveModule:
   def __init__(
     self,
-    driveMotorId: int,
     turnMotorId: int,
-    driveEncoderAId: int,
-    driveEncoderBId: int,
-    turnEncoderAId: int,
-    turnEncoderBId: int,
+    driveMotorId: int,
+    chassisAngularOffset: int = 0,
+    invertTurnEncoder: bool = False,
   ):
     """Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
 
     :param driveMotorId:      PWM output for the drive motor.
     :param turnMotorId:    PWM output for the turning motor.
-    :param driveEncoderAId:   DIO input for the drive encoder A
-    :param driveEncoderBId:   DIO input for the drive encoder B
-    :param turnEncoderAId: DIO input for the turning encoder A
-    :param turnEncoderBId: DIO input for the turning encoder B
+    :param invertTurnEncoder:   Inverts the turning encoder.
+    :param chassisAngularOffset: The angle of the module relative to the chassis (radians).
     """
-    self.driveMotor = wpilib.PWMTalonFX(driveMotorId)
-    self.turnMotor = wpilib.PWMSparkMax(turnMotorId)
+    self.chassisAngularOffset = chassisAngularOffset
+    self.desiredState = SwerveModuleState(0.0, Rotation2d())
 
-    self.driveEncoder = wpilib.Encoder(driveEncoderAId, driveEncoderBId)
-
-    self.turningEncoder = wpilib.Encoder(turnEncoderAId, turnEncoderBId)
-
-    # TODO: ALL PID CONTROLLERS MUST BE CALIBRATED
-    self.drivePIDController = wpimath.controller.PIDController(1, 0, 0)
-
-    # TODO: ALL PID CONTROLLERS MUST BE CALIBRATED
-    self.turningPIDController = wpimath.controller.ProfiledPIDController(
-      1,
-      0,
-      0,
-      wpimath.trajectory.TrapezoidProfile.Constraints(
-        SwerveModuleConstants.kModuleMaxAngularVelocity,
-        SwerveModuleConstants.kModuleMaxAngularAcceleration,
-      ),
+    ### Motors and Configuration ###
+    self.driveMotor = hardware.TalonFX(driveMotorId)
+    self.turnMotor = SparkMax(
+      turnMotorId,
+      SparkMax.MotorType.kBrushless,
     )
 
-    # TODO: ALL PID CONTROLLERS MUST BE CALIBRATED
-    self.driveFeedforward = wpimath.controller.SimpleMotorFeedforwardMeters(1, 3)
-    self.turnFeedforward = wpimath.controller.SimpleMotorFeedforwardMeters(1, 0.5)
-
-    # Set the distance per pulse for the drive encoder. We can simply use the distance traveled for one rotation of the wheel divided by the encoder resolution.
-    self.driveEncoder.setDistancePerPulse(
-      (math.tau * SwerveModuleConstants.kWheelRadius)
-      / SwerveModuleConstants.kEncoderResolution
+    # Turning encoder should be inverted if the output shaft rotates in the opposite direction of the steering motor.
+    Config.MAXSwerveModule.turnConfig.absoluteEncoder.inverted(invertTurnEncoder)
+    self.turnMotor.configure(
+      Config.MAXSwerveModule.turnConfig,
+      SparkBase.ResetMode.kResetSafeParameters,
+      SparkBase.PersistMode.kPersistParameters,
     )
 
-    # Set the distance (in this case, angle) in radians per pulse for the turning encoder. This is the the angle through an entire rotation (2 * pi) divided by the encoder resolution.
-    self.turningEncoder.setDistancePerPulse(
-      math.tau / SwerveModuleConstants.kEncoderResolution
-    )
+    # Any unmodified configs in a configuration object are *automatically* factory-defaulted. If you want to explicitly factory reset the config, use: self.driveMotor.configurator.apply(configs.TalonFXConfiguration())
+    self.driveMotor.configurator.apply(Config.MAXSwerveModule.driveMotorConfig)
 
-    # Limit the PID Controller's input range between -pi and pi and set the input to be continuous.
-    self.turningPIDController.enableContinuousInput(-math.pi, math.pi)
+    ### Encoders ### (Talon FX encoder is built in, no need to store it)
+    self.turnEncoder = self.turnMotor.getAbsoluteEncoder()
 
-  def getState(self) -> wpimath.kinematics.SwerveModuleState:
+    ### Closed Loop Controllers ### (Drive Motor can only get the CLC output)
+    self.turnClosedLoopController = self.turnMotor.getClosedLoopController()
+
+    self.desiredState.angle = Rotation2d(self.turnEncoder.getPosition())
+    self.driveMotor.set_position(0)
+
+  def getState(self) -> SwerveModuleState:
     """Returns the current state of the module.
 
     :returns: The current state of the module.
     """
-    return wpimath.kinematics.SwerveModuleState(
-      self.driveEncoder.getRate(),
-      wpimath.geometry.Rotation2d(self.turningEncoder.getDistance()),
+    # TODO: self.driveMotor.get_velocity() needs to be converted to m/s. See: https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/src/main/java/frc/robot/Configs.java
+    return SwerveModuleState(
+      self.driveMotor.get_velocity(),
+      Rotation2d(self.turnEncoder.getPosition() - self.chassisAngularOffset),
     )
 
-  def getPosition(self) -> wpimath.kinematics.SwerveModulePosition:
+  def getPosition(self) -> SwerveModulePosition:
     """Returns the current position of the module.
 
     :returns: The current position of the module.
     """
-    return wpimath.kinematics.SwerveModulePosition(
-      self.driveEncoder.getDistance(),
-      wpimath.geometry.Rotation2d(self.turningEncoder.getDistance()),
+    # TODO: self.driveMotor.get_position() needs to be converted to meters. See: https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/src/main/java/frc/robot/Configs.java
+    return SwerveModulePosition(
+      self.driveMotor.get_position(),
+      Rotation2d(self.turnEncoder.getPosition() - self.chassisAngularOffset),
     )
 
-  def setDesiredState(self, desiredState: wpimath.kinematics.SwerveModuleState) -> None:
+  def setDesiredState(self, desiredState: SwerveModuleState) -> None:
     """Sets the desired state for the module.
 
     :param desiredState: Desired state with speed and angle.
     """
-
-    encoderRotation = wpimath.geometry.Rotation2d(self.turningEncoder.getDistance())
-
-    # Optimize the reference state to avoid spinning further than 90 degrees
-    desiredState.optimize(encoderRotation)
-
-    # Scale speed by cosine of angle error. This scales down movement perpendicular to the desired direction of travel that can occur when modules change directions. This results in smoother driving.
-    desiredState.cosineScale(encoderRotation)
-
-    # Calculate the drive output from the drive PID controller.
-    driveOutput = self.drivePIDController.calculate(
-      self.driveEncoder.getRate(), desiredState.speed
+    correctedDesiredState = SwerveModuleState()
+    correctedDesiredState.speed = desiredState.speed
+    correctedDesiredState.angle = desiredState.angle.__add__(
+      Rotation2d.fromDegrees(radiansToDegrees(self.chassisAngularOffset))
     )
 
-    driveFeedforward = self.driveFeedforward.calculate(desiredState.speed)
+    # Optimize the reference state to avoid spinning further than 90 degrees.
+    correctedDesiredState.optimize(Rotation2d(self.turnEncoder.getPosition()))
 
-    # Calculate the turning motor output from the turning PID controller.
-    turnOutput = self.turningPIDController.calculate(
-      self.turningEncoder.getDistance(), desiredState.angle.radians()
+    # Command driving and turning motors towards their respective setpoints.
+    # TODO: Need to convert correctedDesiredState from m/s to native units.
+    # wheelCircumference = 0.1  # Example value, replace with your actual wheel circumference in meters
+    # rotationsPerMeter = 1 / wheelCircumference
+    # speedRotationsPerSecond = correctedDesiredState.speed * rotationsPerMeter
+    self.driveMotor.set_control(controls.VelocityDutyCycle(correctedDesiredState.speed))
+    self.turnClosedLoopController.setReference(
+      correctedDesiredState.angle.radians(), SparkLowLevel.ControlType.kPosition
     )
 
-    turnFeedforward = self.turnFeedforward.calculate(
-      self.turningPIDController.getSetpoint().velocity
-    )
+    self.desiredState = desiredState
 
-    self.driveMotor.setVoltage(driveOutput + driveFeedforward)
-    self.turnMotor.setVoltage(turnOutput + turnFeedforward)
+  def resetDriveEncoder(self) -> None:
+    """Resets the encoders on the module."""
+    self.driveMotor.set_position(0)

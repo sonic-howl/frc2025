@@ -1,14 +1,24 @@
 import math
 
-import wpimath.geometry
+from wpimath import units
+from wpimath.geometry import Translation2d
+from wpimath.kinematics import SwerveDrive4Kinematics
 
 
 class RobotConstants:
   # TODO: Measure the swerve module locations. (Units: Meters (m))
-  kFrontLeftLocation = wpimath.geometry.Translation2d(0.381, 0.381)
-  kFrontRightLocation = wpimath.geometry.Translation2d(0.381, -0.381)
-  kBackLeftLocation = wpimath.geometry.Translation2d(-0.381, 0.381)
-  kBackRightLocation = wpimath.geometry.Translation2d(-0.381, -0.381)
+  #  Chassis configuration
+  kTrackWidth = units.inchesToMeters(26.5)
+  # Distance between centers of right and left wheels on robot
+  kWheelBase = units.inchesToMeters(26.5)
+
+  # Distance between front and back wheels on robot
+  kDriveKinematics = SwerveDrive4Kinematics(
+    Translation2d(kWheelBase / 2, kTrackWidth / 2),
+    Translation2d(kWheelBase / 2, -kTrackWidth / 2),
+    Translation2d(-kWheelBase / 2, kTrackWidth / 2),
+    Translation2d(-kWheelBase / 2, -kTrackWidth / 2),
+  )
 
 
 class SwerveModuleConstants:
@@ -19,10 +29,10 @@ class SwerveModuleConstants:
 
 
 class DriveSubsystemConstants:
-  kMaxSpeed = 3.0  # m/s
-  kMaxAngularSpeed = math.pi  # 1/2 rotation per second
+  kMaxSpeedMetersPerSecond = 4.8
+  kMaxAngularSpeed = 2 * math.pi  # 1 rotation per second (in radians)
 
-  # Motor Ids (Turning: Even, Drive: Odd) [Ids: 10-19 (18,19 are extra)]
+  ### Motor Ids ### (Turning: Even, Drive: Odd) [Ids: 10-19 (18,19 are extra)]
   kFrontLeftTurningMotorId = 10
   kFrontLeftDriveMotorId = 11
 
@@ -35,28 +45,16 @@ class DriveSubsystemConstants:
   kBackRightTurningMotorId = 16
   kBackRightDriveMotorId = 17
 
-  # Encoder Ids
-  kFrontLeftDriveEncoderAId = 0
-  kFrontLeftDriveEncoderBId = 1
-  kFrontLeftTurningEncoderAId = 2
-  kFrontLeftTurningEncoderBId = 3
-
-  kFrontRightDriveEncoderAId = 4
-  kFrontRightDriveEncoderBId = 5
-  kFrontRightTurningEncoderAId = 6
-  kFrontRightTurningEncoderBId = 7
-
-  kBackLeftDriveEncoderAId = 8
-  kBackLeftDriveEncoderBId = 9
-  kBackLeftTurningEncoderAId = 10
-  kBackLeftTurningEncoderBId = 11
-
-  kBackRightDriveEncoderAId = 12
-  kBackRightDriveEncoderBId = 13
-  kBackRightTurningEncoderAId = 14
-  kBackRightTurningEncoderBId = 15
+  ### Angular Offsets ### (in radians)
+  # TODO: Measure the angular offsets of the swerve modules.
+  kFrontLeftChassisAngularOffset = -math.pi / 2
+  kFrontRightChassisAngularOffset = 0
+  kBackLeftChassisAngularOffset = math.pi
+  kBackRightChassisAngularOffset = math.pi / 2
 
 
 class ControllerConstants:
   kDriverControllerPort = 0
   kOperatorControllerPort = 1
+
+  kDriveDeadband = 0.05
