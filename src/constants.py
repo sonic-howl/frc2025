@@ -2,5 +2,6 @@ class Constants:
   kExampleConstant = True
 
 
-class DriverConstants:
-  kDriverConstant = True
+class ControllerConstants:
+  kDriverControllerPort = 0
+  kOperatorControllerPort = 1
