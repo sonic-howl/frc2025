@@ -1,6 +1,7 @@
 import math
 
 from phoenix6 import configs
+from phoenix6.signals import FeedbackSensorSourceValue
 from phoenix6.signals.spn_enums import NeutralModeValue
 from rev import ClosedLoopConfig, SparkBaseConfig, SparkMaxConfig
 
@@ -27,6 +28,9 @@ class Config:
 
     ### Drive Motor and Encoder Config ###
     driveMotorConfig = configs.TalonFXConfiguration()
+    driveMotorConfig.feedback.feedback_sensor_source = (
+      FeedbackSensorSourceValue.ROTOR_SENSOR
+    )
 
     # kDrivingVelocityFeedForward = None
 
