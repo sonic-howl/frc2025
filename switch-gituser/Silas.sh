@@ -1,6 +1,6 @@
 # Set your GitHub username and email
-USERNAME="NathanGrenier" # Make sure to remove the {}
-EMAIL="nathangrenier01@gmail.com" # Make sure to remove the {}
+USERNAME="magnite5" # Make sure to remove the {}
+EMAIL="magnite50@gmail.com" # Make sure to remove the {}
 
 git config user.name "$USERNAME"
 git config user.email "$EMAIL"

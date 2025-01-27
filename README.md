@@ -1,7 +1,209 @@
-# frc2024
+# FRC 2025
 
-TODO: Status Badges
-| Branch | Status |
+| Branch  | Status                                                                                                                                                                           |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| main    | [![CI](https://github.com/sonic-howl/frc2025/actions/workflows/integrate.yaml/badge.svg?branch=main)](https://github.com/sonic-howl/frc2025/actions/workflows/integrate.yaml)    |
+| develop | [![CI](https://github.com/sonic-howl/frc2025/actions/workflows/integrate.yaml/badge.svg?branch=develop)](https://github.com/sonic-howl/frc2025/actions/workflows/integrate.yaml) |
+
+- [FRC 2025](#frc-2025)
+  - [Planning](#planning)
+  - [Useful Resources](#useful-resources)
+  - [Using the Lab PCs](#using-the-lab-pcs)
+  - [Build and Deploy Commands](#build-and-deploy-commands)
+    - [Running Robot Code](#running-robot-code)
+    - [Formatting Code](#formatting-code)
+    - [Linting Code](#linting-code)
+    - [Using the Driver Station](#using-the-driver-station)
+    - [Deploying Code to Robot](#deploying-code-to-robot)
+  - [Simulation Testing](#simulation-testing)
+    - [Running the Robot Simulation](#running-the-robot-simulation)
+    - [Running Robot Dashboards during a Simulation](#running-robot-dashboards-during-a-simulation)
+    - [Run Tests](#run-tests)
+  - [Getting started](#getting-started)
+    - [Installing FRC Game Tools](#installing-frc-game-tools)
+    - [Installing WPILib 2025 (Python)](#installing-wpilib-2025-python)
+      - [Installing Python](#installing-python)
+      - [Install VSCode](#install-vscode)
+      - [Getting Started with VSCode](#getting-started-with-vscode)
+    - [Cloning the GitHub Repository](#cloning-the-github-repository)
+    - [Installing RobotPy and Dependencies](#installing-robotpy-and-dependencies)
+    - [**Optional:** Creating an Alias](#optional-creating-an-alias)
+    - [Installing OpenCV](#installing-opencv)
+    - [Installing Formatter and Linter](#installing-formatter-and-linter)
+  - [Configuring Hardware](#configuring-hardware)
+    - [RoboRIO Image Update](#roborio-image-update)
+    - [Programming the Radio](#programming-the-radio)
+
+## Planning
+[Miro - Gantt Chart](https://miro.com/app/board/uXjVLLV_LVY=/?moveToWidget=3458764612561287452&cot=14)
+
+## Useful Resources
+
+- RobotPy Example Repository: https://github.com/robotpy/examples
+
+## Using the Lab PCs
+
+When using the Lab PCs, you're going to want to use your GitHub account so the rest of the team knows who worked on what. If you don't have one, [create one here](https://github.com/signup).
+
+If you're using a lab PC, follow these steps to link your GitHub account to VsCode:
+
+1. Create a new script in the `switch-gituser` folder and use your real name as the name of the file (Ex: create new file `NathanGrenier.sh` in folder `switch-gituser`).
+2. Replace the `USERNAME` and `EMAIL` variables in the newly created file with your GitHub username and password.
+
+**Example:**
+
+```bash
+# Set your GitHub username and email
+USERNAME="{REPLACE ME WITH GITHUB YOUR USERNAME}" # Make sure to remove the {}
+EMAIL="{REPALCE ME WITH YOUR GITHUB EMAIL}" # Make sure to remove the {}
+
+git config user.name "$USERNAME"
+git config user.email "$EMAIL"
+
+echo "Git user has been set to: $USERNAME ($EMAIL)"
+```
+
+1. In order to change VsCode's GitHub credentials, use the script by running the following command:
+
+Windows (PowerShell):
+```ps1
+bash .\switch-gituser\{THE NAME OF YOUR FILE}.sh
+```
+
+> In order to use this option you need to install git (and Git Bash). Make sure to add `C:\Program Files\git\bin\` to your Windows PATH.
+
+Windows (GitBash):
+
+```bash
+./switch-gituser/{THE NAME OF YOUR FILE}.sh
+```
+## Build and Deploy Commands
+
+To view all available robotpy commands, use the following command:
+
+```bash
+# Windows
+py -3 -m robotpy
+
+# Linux
+python3 -m robotpy
+```
+
+> You can pass the `--help` argument to see more information about the subcommand.
+>
+> For example, to see help for the sim command you can do the following:
+>
+> ```bash
+> # Windows
+> py -3 -m robotpy sim --help
+> 
+> # Linux
+> python3 -m robotpy sim --help
+> ```
+
+### Running Robot Code
+
+In order to run the robot code, use the following command:
+
+```bash
+# Windows
+py -3 robot.py
+
+# Linux
+python3 robot.py
+```
+
+> See full guide on running robot code [here](https://robotpy.readthedocs.io/en/stable/guide/running.html)
+
+### Formatting Code
+
+The following command can be used to format the code:
+
+```bash
+# Windows
+py -3 -m ruff format
+
+# Linux
+ruff format
+```
+
+When code is pushed to the repository, a workflow will be run to check if the code is properly formatted. If it isn't, you won't be able to merge the code. In order to check if the project is properly formatted, run:
+
+```bash
+# Windows
+py -3 -m ruff format --check
+
+# Linux
+ruff format --check
+```
+
+### Linting Code
+
+Code linting is like a spell check for your code. It helps find mistakes and keeps your code neat and consistent, making it easier to read and understand.
+
+To run the linting check, use the following command:
+
+```bash
+# Windows
+py -3 -m ruff check .
+
+# Linux
+ruff check .
+```
+
+### Using the Driver Station
+
+This [guide](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-4/running-test-program.html) shows you how to setup the FRC driver station in order to run your test programs.
+
+### Deploying Code to Robot
+
+You can deploy robot code to a robot you're connected to using:
+
+```bash
+# Windows
+py -3 robot.py deploy
+
+# Linux
+python3 robot.py deploy
+```
+
+> Before deploying, make sure you have used the `cd` command to navigate to the `/src` directory. This needs to be done because we only want to deploy the code present in the `/src` folder to the robot (due to memory limitations).
+
+> See full guide on deploying robot code [here](https://robotpy.readthedocs.io/en/stable/guide/deploy.html)
+
+## Simulation Testing
+
+WPILib provides a [simulator](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/introduction.html) to test your code without being physically connected to a robot.
+
+### Running the Robot Simulation
+
+A robot simulation is available for testing. Read the full documentation [here](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/introduction.html).
+
+You can run it with the following command:
+
+```bash
+# Windows
+py -3 -m robotpy sim
+
+# Linux and macOS
+python3 -m robotpy sim
+```
+
+### Running Robot Dashboards during a Simulation
+
+Follow [this guide](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/introduction.html#running-robot-dashboards) to enable whichever dashboard you plan on using during the simulation.
+
+### Run Tests
+
+You can also manually run unit tests using:
+
+```bash
+# Windows
+py -3 -m robot.py test
+
+# Linux
+python3 -m robot.py test
+```
 
 ## Getting started
 
@@ -100,7 +302,7 @@ py -3 -m pip install --upgrade robotpy
 py -3 -m robotpy sync
 ```
 
-> I got a lot of issues with my python packages since they were previously installed globally. If you encounter any issues with the install, try running this command `pym pip freeze | ForEach-Object { pym pip uninstall -y $_ }` to uninstall all of your packages. Then, rerun the installation steps above.
+> I got a lot of issues with my python packages since they were previously installed globally. If you encounter any issues with the install, try running this command `py -3 -m pip freeze | ForEach-Object { py -3 -m pip uninstall -y $_ }` to uninstall all of your packages. Then, rerun the installation steps above.
 
 **For Linux and macOS**
 
@@ -201,234 +403,7 @@ To configure the ruff VsCode extension, follow these steps:
 ```
 
 > Note: These formatting settings are scoped to this workspace only.
-
-## Using the Lab PCs
-
-When using the Lab PCs, you're going to want to use your GitHub account so the rest of the team knows who worked on what. If you don't have one, [create one here](https://github.com/signup).
-
-If you're using a lab PC, follow these steps to link your GitHub account to VsCode:
-
-1. Create a new script in the `switch-gituser` folder and use your real name as the name of the file (Ex: create new file `NathanGrenier.sh` in folder `switch-gituser`).
-2. Replace the `USERNAME` and `EMAIL` variables in the newly created file with your GitHub username and password.
-
-**Example:**
-
-```bash
-# Set your GitHub username and email
-USERNAME="{REPLACE ME WITH GITHUB YOUR USERNAME}" # Make sure to remove the {}
-EMAIL="{REPALCE ME WITH YOUR GITHUB EMAIL}" # Make sure to remove the {}
-
-git config user.name "$USERNAME"
-git config user.email "$EMAIL"
-
-echo "Git user has been set to: $USERNAME ($EMAIL)"
-```
-
-1. In order to change VsCode's GitHub credentials, use the script by running the following command:
-
-Windows (PowerShell):
-```ps1
-bash .\switch-gituser\{THE NAME OF YOUR FILE}.sh
-```
-
-> In order to use this option you need to install git (and Git Bash). Make sure to add `C:\Program Files\git\bin\` to your Windows PATH.
-
-Windows (GitBash):
-
-```bash
-./switch-gituser/{THE NAME OF YOUR FILE}.sh
-```
-## Build and Deploy Commands
-
-To view all available robotpy commands, use the following command:
-
-```bash
-# Windows
-py -3 -m robotpy
-
-# Linux
-python3 -m robotpy
-```
-
-> You can pass the `--help` argument to see more information about the subcommand.
->
-> For example, to see help for the sim command you can do the following:
->
-> ```bash
-> # Windows
-> py -3 -m robotpy sim --help
 > 
-> # Linux
-> python3 -m robotpy sim --help
-> ```
-
-### Running Robot Code
-
-In order to run the robot code, use the following command:
-
-```bash
-# Windows
-py -3 robot.py
-
-# Linux
-python3 robot.py
-```
-
-> See full guide on running robot code [here](https://robotpy.readthedocs.io/en/stable/guide/running.html)
-
-### Formatting Code
-
-The following command can be used to format the code:
-
-```bash
-# Windows
-py -3 -m ruff format
-
-# Linux
-ruff format
-```
-
-When code is pushed to the repository, a workflow will be run to check if the code is properly formatted. If it isn't, you won't be able to merge the code. In order to check if the project is properly formatted, run:
-
-```bash
-# Windows
-py -3 -m ruff format --check
-
-# Linux
-ruff format --check
-```
-
-> A pre-commit hook will also automatically check this for you. If the files aren't formatted correctly, you won't be able to commit.
-
-### Linting Code
-
-Code linting is like a grammar check for your code. It helps find mistakes and keeps your code neat and consistent, making it easier to read and understand.
-
-To run the linting check, use the following command:
-
-```bash
-# Windows
-py -3 -m ruff check .
-
-# Linux
-ruff check .
-```
-
-### Using the Driver Station
-
-This [guide](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-4/running-test-program.html) shows you how to setup the FRC driver station in order to run your test programs.
-
-### Deploying Code to Robot
-
-You can deploy robot code to a robot you're connected to using:
-
-```bash
-# Windows
-py -3 robot.py deploy
-
-# Linux
-python3 robot.py deploy
-```
-
-> Before deploying, make sure you have used the `cd` command to navigate to the `/src` directory. This needs to be done because we only want to deploy the code present in the `/src` folder to the robot (due to memory limitations).
-
-> See full guide on deploying robot code [here](https://robotpy.readthedocs.io/en/stable/guide/deploy.html)
-
-## Simulation Testing
-
-WPILib provides a [simulator](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/introduction.html) to test your code without being physically connected to a robot.
-
-### Running the Robot Simulation
-
-A robot simulation is available for testing. Read the full documentation [here](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/introduction.html).
-
-You can run it with the following command:
-
-```bash
-# Windows
-py -3 -m robotpy sim
-
-# Linux and macOS
-python3 -m robotpy sim
-```
-
-### Running Robot Dashboards during a Simulation
-
-Follow [this guide](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/introduction.html#running-robot-dashboards) to enable whichever dashboard you plan on using during the simulation.
-
-### Run Tests
-
-You can also manually run unit tests using:
-
-```bash
-# Windows
-py -3 -m robot.py test
-
-# Linux
-python3 -m robot.py test
-```
-
-### Code Coverage
-
-To measure the code coverage of your tests, first install the `coverage` package:
-
-```bash
-# Windows
-py -3 -m pip install coverage
-
-# Linux
-python3 -m pip install coverage
-```
-
-> See full unit testing documentation [here](https://robotpy.readthedocs.io/en/stable/guide/testing.html)
-
-#### Test Coverage
-
-To run the `test` command to run unit tests, use:
-
-```bash
-# Windows
-py -3 -m robotpy coverage test
-
-# Linux
-python3 -m robotpy coverage test
-```
-
-#### Sim Coverage
-
-To run coverage over the simulator, use:
-
-```bash
-# Windows
-py -3 -m robotpy coverage sim
-
-# Linux
-python3 -m robotpy coverage sim
-```
-
-#### Coverage Report
-
-To view the report of a previous test run in the console, use:
-
-```bash
-# Windows
-py -3 -m coverage report -m
-
-# Linux
-python3 -m coverage report -m
-```
-
----
-
-To generate the coverage report as a html file, use:
-
-```bash
-# Windows
-py -3 -m coverage html
-
-# Linux
-python3 -m coverage html
-```
 
 ## Configuring Hardware
 
