@@ -5,6 +5,7 @@ from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 from wpimath.units import radiansToDegrees
 
 from config import Config
+from constants import SwerveModuleConstants
 
 
 class SwerveModule:
@@ -53,7 +54,9 @@ class SwerveModule:
 
     # TODO: self.driveMotor.get_velocity() needs to be converted to m/s. See: https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/src/main/java/frc/robot/Configs.java
     return SwerveModuleState(
-      self.driveMotor.get_velocity(),
+      SwerveModuleConstants.driveMotorRPMToMeters(
+        self.driveMotor.get_velocity().value_as_double
+      ),
       Rotation2d(self.turnEncoder.getPosition() - self.chassisAngularOffset),
     )
 
@@ -62,7 +65,9 @@ class SwerveModule:
 
     # TODO: self.driveMotor.get_position() needs to be converted to meters. See: https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/src/main/java/frc/robot/Configs.java
     return SwerveModulePosition(
-      self.driveMotor.get_position().value_as_double,
+      SwerveModuleConstants.driveMotorRotationsToMeters(
+        self.driveMotor.get_position().value_as_double
+      ),
       Rotation2d(self.turnEncoder.getPosition() - self.chassisAngularOffset),
     )
 
@@ -82,10 +87,13 @@ class SwerveModule:
 
     # Command driving and turning motors towards their respective setpoints.
     # TODO: Need to convert correctedDesiredState from m/s to native units.
-    # wheelCircumference = 0.1  # Example value, replace with your actual wheel circumference in meters
-    # rotationsPerMeter = 1 / wheelCircumference
-    # speedRotationsPerSecond = correctedDesiredState.speed * rotationsPerMeter
-    self.driveMotor.set_control(controls.VelocityDutyCycle(correctDesiredState.speed))
+    self.driveMotor.set_control(
+      controls.VelocityDutyCycle(
+        SwerveModuleConstants.driveMotorMetersPerSecondToDriveMotorRotationsPerSecond(
+          correctDesiredState.speed
+        )
+      )
+    )
     self.turnClosedLoopController.setReference(
       correctDesiredState.angle.radians(), SparkLowLevel.ControlType.kPosition
     )

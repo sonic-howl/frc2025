@@ -6,9 +6,8 @@ from wpimath.kinematics import SwerveDrive4Kinematics
 
 
 class RobotConstants:
-  # TODO: Measure the swerve module lcoations: (Units: Meters (m))
-  kFrameLength = units.inchesToMeters(26.5)
-  kFrameWidth = units.inchesToMeters(26.5)
+  kFrameLength = units.inchesToMeters(30)
+  kFrameWidth = units.inchesToMeters(26)
 
 
 class ControllerConstants:
@@ -43,8 +42,44 @@ class DriveSubsystemConstants:
   kBackRightDriveMotorId = 17
 
   ### Angular Offsets ### (in radians)
-  # TODO: Measure the angular offsets of the swerve modules.
-  kFrontLeftChassisAngularOffset = -math.pi / 2
-  kFrontRightChassisAngularOffset = 0
-  kBackLeftChassisAngularOffset = math.pi
-  kBackRightChassisAngularOffset = math.pi / 2
+  # Use WPILib Coordinate System Conventions to Calculate: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
+  kFrontLeftChassisAngularOffset = math.tan(
+    (RobotConstants.kFrameLength / 2) / (RobotConstants.kFrameWidth / 2)
+  )
+  kFrontRightChassisAngularOffset = kFrontLeftChassisAngularOffset - math.pi
+  kBackLeftChassisAngularOffset = kFrontLeftChassisAngularOffset + math.pi
+  kBackRightChassisAngularOffset = kFrontLeftChassisAngularOffset - (2 * math.pi)
+
+
+class SwerveModuleConstants:
+  kWheelDiameter = units.inchesToMeters(3)
+  kWheelCircumference = kWheelDiameter * math.pi
+  kDriveMotorGearRatio = 1 / 4.71
+
+  @staticmethod
+  def driveMotorRotationsToMeters(rotations: float) -> float:
+    """
+    Convert the drive motor's encoder readings from rotations to meters
+    Will work for rotations or rotations per minute
+
+    :param rpm: Rotations or Rotations per Minute
+    """
+    rps = rotations / 60
+
+    return (
+      SwerveModuleConstants.kWheelCircumference
+      * rps
+      * SwerveModuleConstants.kDriveMotorGearRatio
+    )
+
+  @staticmethod
+  def driveMotorMetersPerSecondToDriveMotorRotationsPerSecond(
+    metersPerSecond: float,
+  ) -> float:
+    """
+    Convert speed in meters per second to wheel rotations per second.
+
+    :param metersPerSecond: Speed in meters per second
+    :return: Speed in wheel rotations per second
+    """
+    return metersPerSecond / SwerveModuleConstants.kWheelCircumference
