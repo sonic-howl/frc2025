@@ -36,9 +36,9 @@ class Config:
     driveConfig.motor_output.neutral_mode = NeutralModeValue.BRAKE
     # driveConfig.voltage.peak_forward_voltage = 16
     # driveConfig.voltage.peak_reverse_voltage = -16
-    driveConfig.current_limits.stator_current_limit = 120
+    driveConfig.current_limits.stator_current_limit = 120  # AMPS
     driveConfig.current_limits.stator_current_limit_enable = True
-    driveConfig.current_limits.supply_current_limit = 70
+    driveConfig.current_limits.supply_current_limit = 70  # AMPS
     driveConfig.current_limits.supply_current_limit_enable = True
 
     # Closed Loop Control
