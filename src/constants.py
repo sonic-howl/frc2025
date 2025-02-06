@@ -9,6 +9,8 @@ class RobotConstants:
   kFrameLength = units.inchesToMeters(30)
   kFrameWidth = units.inchesToMeters(26)
 
+  kWheelCenterOffset = units.inchesToMeters(1.5)
+
 
 class ControllerConstants:
   kDriverControllerPort = 0
@@ -23,38 +25,69 @@ class DriveSubsystemConstants:
 
   # WPILib Coordinate System Conventions: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
   kDriveKinematics = SwerveDrive4Kinematics(
-    Translation2d(RobotConstants.kFrameWidth / 2, RobotConstants.kFrameLength / 2),
-    Translation2d(RobotConstants.kFrameWidth / 2, -RobotConstants.kFrameLength / 2),
-    Translation2d(-RobotConstants.kFrameWidth / 2, RobotConstants.kFrameLength / 2),
-    Translation2d(-RobotConstants.kFrameWidth / 2, -RobotConstants.kFrameLength / 2),
+    Translation2d(
+      (RobotConstants.kFrameWidth / 2) - RobotConstants.kWheelCenterOffset,
+      (RobotConstants.kFrameLength / 2) - RobotConstants.kWheelCenterOffset,
+    ),
+    Translation2d(
+      (RobotConstants.kFrameWidth / 2) - RobotConstants.kWheelCenterOffset,
+      (-RobotConstants.kFrameLength / 2) - RobotConstants.kWheelCenterOffset,
+    ),
+    Translation2d(
+      (-RobotConstants.kFrameWidth / 2) - RobotConstants.kWheelCenterOffset,
+      (RobotConstants.kFrameLength / 2) - RobotConstants.kWheelCenterOffset,
+    ),
+    Translation2d(
+      (-RobotConstants.kFrameWidth / 2) - RobotConstants.kWheelCenterOffset,
+      (-RobotConstants.kFrameLength / 2) - RobotConstants.kWheelCenterOffset,
+    ),
   )
   ### Motor Ids ### (Turning: Even, Drive: Odd) [Ids: 10-19 (18,19 are extra)]
-  kFrontLeftTurningMotorId = 10
-  kFrontLeftDriveMotorId = 11
+  # Temporarily changed to ROBOT POV
+  # Should be undone, and updated in config.py for more consistency
+  kFrontLeftTurningMotorId = 12
+  kFrontLeftDriveMotorId = 13
 
-  kFrontRightTurningMotorId = 12
-  kFrontRightDriveMotorId = 13
+  kFrontRightTurningMotorId = 10
+  kFrontRightDriveMotorId = 11
 
-  kBackLeftTurningMotorId = 14
-  kBackLeftDriveMotorId = 15
+  kBackLeftTurningMotorId = 16
+  kBackLeftDriveMotorId = 17
 
-  kBackRightTurningMotorId = 16
-  kBackRightDriveMotorId = 17
+  kBackRightTurningMotorId = 14
+  kBackRightDriveMotorId = 15
 
   ### Angular Offsets ### (in radians)
   # Use WPILib Coordinate System Conventions to Calculate: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
-  kFrontLeftChassisAngularOffset = math.tan(
-    (RobotConstants.kFrameLength / 2) / (RobotConstants.kFrameWidth / 2)
-  )
-  kFrontRightChassisAngularOffset = kFrontLeftChassisAngularOffset - math.pi
-  kBackLeftChassisAngularOffset = kFrontLeftChassisAngularOffset + math.pi
-  kBackRightChassisAngularOffset = kFrontLeftChassisAngularOffset - (2 * math.pi)
+  kFrontLeftChassisAngularOffset = math.pi / 2
+  kFrontRightChassisAngularOffset = 0
+  kBackLeftChassisAngularOffset = math.pi
+  kBackRightChassisAngularOffset = math.pi / 2
 
 
 class SwerveModuleConstants:
+  """
+  Translated from java, based on https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/src/main/java/frc/robot/Constants.java
+
+  The MAXSwerve module can be configured with one of three pinion gears: 12T,
+  13T, or 14T. This changes the drive speed of the module (a pinion gear with
+  more teeth will result in a robot that drives faster).
+  """
+
+  kDriveMotorPinionTeeth = 14
+
   kWheelDiameter = units.inchesToMeters(3)
   kWheelCircumference = kWheelDiameter * math.pi
-  kDriveMotorGearRatio = 1 / 4.71
+  kDrivingMotorFreeSpeedRotationsPerSecond = 5676 / 60
+  # 45 teeth on bevel gear, 22 on first-stage spur gear, 15 on bevel pinion
+  kDriveMotorReduction = (45.0 * 22) / (kDriveMotorPinionTeeth * 15)
+  kWheelFreeSpeedRotationsPerSecond = (
+    kDrivingMotorFreeSpeedRotationsPerSecond
+    * kWheelCircumference
+    / kDriveMotorReduction
+  )
+
+  kDriveMotorGearRatio = 1 / kDriveMotorReduction
 
   @staticmethod
   def driveMotorRotationsToMeters(rotations: float) -> float:

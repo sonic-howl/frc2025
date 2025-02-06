@@ -21,7 +21,7 @@ class Config:
     # TODO: Calibrate PID Controller
     turnConfig.closedLoop.setFeedbackSensor(
       ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder
-    ).pid(1, 0, 0).outputRange(-1, 1).positionWrappingEnabled(
+    ).pid(0.04, 0, 0).outputRange(-1, 1).positionWrappingEnabled(
       True
     ).positionWrappingInputRange(0, kTurningFactor)
 
@@ -42,7 +42,7 @@ class Config:
     driveConfig.current_limits.supply_current_limit_enable = True
 
     # Closed Loop Control
-    driveConfig.slot0.k_p = 0.5
+    driveConfig.slot0.k_p = 0.1
     driveConfig.slot0.k_d = 0
     driveConfig.slot0.k_i = 0
     # driveConfig.slot0.k_v = 0 #TODO: Needs Calibration
