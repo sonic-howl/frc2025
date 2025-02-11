@@ -1,6 +1,6 @@
 import math
 
-from wpimath import units
+from wpimath import trajectory, units
 from wpimath.geometry import Translation2d
 from wpimath.kinematics import SwerveDrive4Kinematics
 
@@ -21,7 +21,7 @@ class ControllerConstants:
 
 class DriveSubsystemConstants:
   kMaxSpeedMetersPerSecond = 4.8
-  kMaxAngularSpeed = 2 * math.pi  # 1 rotation per second (in radians)
+  kMaxAngularSpeed = math.pi * 2  # 1 rotation per second (in radians)
 
   # WPILib Coordinate System Conventions: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
   kDriveKinematics = SwerveDrive4Kinematics(
@@ -59,7 +59,12 @@ class DriveSubsystemConstants:
 
   ### Angular Offsets ### (in radians)
   # Use WPILib Coordinate System Conventions to Calculate: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
-  kFrontLeftChassisAngularOffset = math.pi / 2
+  # kFrontLeftChassisAngularOffset = math.pi / 2
+  # kFrontRightChassisAngularOffset = 0
+  # kBackLeftChassisAngularOffset = 0
+  # kBackRightChassisAngularOffset = math.pi / 2
+  # FROM EXAMPLE CODE:
+  kFrontLeftChassisAngularOffset = -math.pi / 2
   kFrontRightChassisAngularOffset = 0
   kBackLeftChassisAngularOffset = math.pi
   kBackRightChassisAngularOffset = math.pi / 2
@@ -106,7 +111,7 @@ class SwerveModuleConstants:
     )
 
   @staticmethod
-  def driveMotorMetersPerSecondToDriveMotorRotationsPerSecond(
+  def driveMotorMetersPerSecondToRotationsPerSecond(
     metersPerSecond: float,
   ) -> float:
     """

@@ -1,10 +1,11 @@
 import navx
 from commands2 import Subsystem
-from wpimath.geometry import Pose2d
+from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.kinematics import (
   ChassisSpeeds,
   SwerveDrive4Kinematics,
   SwerveDrive4Odometry,
+  SwerveModuleState,
 )
 
 from constants import DriveSubsystemConstants, RobotConstants
@@ -82,6 +83,23 @@ class DriveSubsystem(Subsystem):
       ),
       pose,
     )
+
+  def getHeading(self) -> float:
+    """
+    Returns the heading of the robot.
+
+    :return the robot's heading in degrees, from -180 to 180
+    """
+    return self.gyro.getRotation2d()
+
+  def setX(self):
+    """
+    Set the wheels in a X position (prevent movement)
+    """
+    self.frontLeft.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(45)))
+    self.frontRight.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(-45)))
+    self.backLeft.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(-45)))
+    self.backRight.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(45)))
 
   def drive(
     self, xSpeed: float, ySpeed: float, rot: float, fieldRelative: bool

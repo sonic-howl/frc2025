@@ -50,7 +50,10 @@ class RobotContainer:
     # self.operatorYButton.whileTrue(
     #   cmd.runOnce(lambda: print("Y Button Pressed (Operator)"))
     # )
-    pass
+    self.driverXButton = self.driverController.x()
+    self.driverXButton.onTrue(
+      cmd.runOnce(self.driveSubsystem.setX(), self.driveSubsystem)
+    )
 
   def configureAuto(self):
     self.autoSelector = wpilib.SendableChooser()

@@ -13,7 +13,7 @@ class SwerveModule:
     self,
     turnMotorId: int,
     driveMotorId: int,
-    chassisAngularOffset: int = 0,
+    chassisAngularOffset: float = 0,
     invertTurnEncoder: bool = False,
   ):
     """Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
@@ -30,7 +30,6 @@ class SwerveModule:
     self.driveMotor = hardware.TalonFX(driveMotorId)
     self.turnMotor = SparkMax(turnMotorId, SparkMax.MotorType.kBrushless)
 
-    Config.MAXSwerveModule.turnConfig.absoluteEncoder.inverted(invertTurnEncoder)
     self.turnMotor.configure(
       Config.MAXSwerveModule.turnConfig,
       SparkBase.ResetMode.kResetSafeParameters,
@@ -54,7 +53,7 @@ class SwerveModule:
 
     # TODO: self.driveMotor.get_velocity() needs to be converted to m/s. See: https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/src/main/java/frc/robot/Configs.java
     return SwerveModuleState(
-      SwerveModuleConstants.driveMotorRPMToMeters(
+      SwerveModuleConstants.driveMotorRotationsToMeters(
         self.driveMotor.get_velocity().value_as_double
       ),
       Rotation2d(self.turnEncoder.getPosition() - self.chassisAngularOffset),
@@ -89,7 +88,7 @@ class SwerveModule:
     # TODO: Need to convert correctedDesiredState from m/s to native units.
     self.driveMotor.set_control(
       controls.VelocityDutyCycle(
-        SwerveModuleConstants.driveMotorMetersPerSecondToDriveMotorRotationsPerSecond(
+        SwerveModuleConstants.driveMotorMetersPerSecondToRotationsPerSecond(
           correctDesiredState.speed
         )
       )

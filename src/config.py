@@ -14,14 +14,14 @@ class Config:
 
     turnConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20)
 
-    turnConfig.absoluteEncoder.positionConversionFactor(
+    turnConfig.absoluteEncoder.inverted(True).positionConversionFactor(
       kTurningFactor
     ).velocityConversionFactor(kTurningFactor / 60.0)  # Radians per Second
 
     # TODO: Calibrate PID Controller
     turnConfig.closedLoop.setFeedbackSensor(
       ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder
-    ).pid(0.04, 0, 0).outputRange(-1, 1).positionWrappingEnabled(
+    ).pid(0, 0, 0).outputRange(-1, 1).positionWrappingEnabled(
       True
     ).positionWrappingInputRange(0, kTurningFactor)
 

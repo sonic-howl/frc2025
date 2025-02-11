@@ -3,9 +3,11 @@ import typing
 import wpilib
 import wpilib.drive
 from commands2 import Command, CommandScheduler, TimedCommandRobot
+from wpilib import SmartDashboard
 
 from robotcontainer import RobotContainer
 from shuffleboard import addDeployArtifacts
+from subsystems.SwerveModule import SwerveModule
 
 
 class MyRobot(TimedCommandRobot):
@@ -19,9 +21,30 @@ class MyRobot(TimedCommandRobot):
     addDeployArtifacts()
 
     self.robotContainer = RobotContainer()
+    self.swerveModule = SwerveModule()
 
   def robotPeriodic(self):
     CommandScheduler.getInstance().run()
+    SmartDashboard.putString(
+      "Front Left (Bot Oriented)",
+      f"{self.robotContainer.driveSubsystem.frontLeft.getPosition().angle.degrees}",
+    )
+    SmartDashboard.putString(
+      "Front Right (Bot Oriented)",
+      f"{self.robotContainer.driveSubsystem.frontRight.getPosition().angle.degrees}",
+    )
+    SmartDashboard.putString(
+      "Back Left (Bot Oriented)",
+      f"{self.robotContainer.driveSubsystem.backLeft.getPosition().angle.degrees}",
+    )
+    SmartDashboard.putString(
+      "Back Right (Bot Oriented)",
+      f"{self.robotContainer.driveSubsystem.backRight.getPosition().angle.degrees}",
+    )
+    SmartDashboard.putString(
+      "Front Left (Bot Oriented - Drive Motor)",
+      f"{self.swerveModule.driveMotor.get_position}",
+    )
 
   def autonomousInit(self):
     """This function is run once each time the robot enters autonomous mode."""
