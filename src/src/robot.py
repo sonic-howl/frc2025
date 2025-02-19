@@ -1,7 +1,6 @@
 # To see messages from networktables, you must setup logging
 import logging
 
-import drivesubsystem
 import navx
 import wpilib
 import wpilib.drive
@@ -10,6 +9,7 @@ import wpimath.controller
 import wpimath.filter
 
 import constants
+from subsystems import drivesubsystem
 
 logging.basicConfig(level=logging.DEBUG)
 

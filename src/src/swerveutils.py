@@ -56,7 +56,7 @@ def stepTowardsCircular(_current: float, _target: float, _stepsize: float) -> fl
     return _target
   elif difference > math.pi:
     if (
-      _current + 2 * math.py - _target < _stepsize
+      _current + 2 * math.pi - _target < _stepsize
       or _target + 2 * math.pi - _current < _stepsize
     ):
       return _target

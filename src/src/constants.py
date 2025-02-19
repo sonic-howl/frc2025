@@ -25,7 +25,13 @@ kDriveDeadband = 0.05
 kMaxSpeedMetersPerSecond = 4.8
 kMaxAngularSpeed = 2 * math.pi
 
-kDrirectionSlewRate = 1.2  # radians per second
+## Speeds
+vx = 1.0
+vy = 1.0
+omega = 1.0
+
+## Other
+kDirectionSlewRate = 1.2  # radians per second
 kMagnitudeSlewRate = 1.8  # percent per second (1 = 100%)
 kRotationalSlewRate = 2.0  # percent per second (1 = 100%)
 

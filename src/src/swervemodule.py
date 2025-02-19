@@ -15,6 +15,8 @@ kEncoderResolution = 4096
 kModuleMaxAngularVelocity = math.pi
 kModuleMaxAngularAcceleration = math.tau
 
+speeds = wpimath.kinematics.ChassisSpeeds(constants.vx, constants.vy, constants.omega)
+
 
 class SwerveModule:
   def __init__(
@@ -63,7 +65,7 @@ class SwerveModule:
 
     # Invert the Turn encoder, since the output shaft rotates in the opposite
     # direction of the steering motor in the MAXSwerve Module.
-    self.TurnEncoder.setInverted(constants.kTurnEncoderInverted)
+    # self.TurnEncoder(constants.kTurnEncoderInverted)
 
     """ Initialize PID Controllers"""
     # create spark max pid controllers

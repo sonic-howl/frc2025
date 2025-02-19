@@ -1,6 +1,7 @@
 import math
 
 import navx
+import networklogger
 import ntcore
 import wpilib
 import wpimath.filter
@@ -11,8 +12,6 @@ import wpimath.units
 import constants
 import swervemodule
 import swerveutils
-
-# import networklogger
 
 
 class DriveSubsystem:
@@ -182,8 +181,8 @@ class DriveSubsystem:
       self.currentRotation = rot
 
     # Convert the commanded speeds into correct units for the drivetrain
-    xSpeedDelivered = xSpeedCommanded * constants.kMaxSpeed
-    ySpeedDelivered = ySpeedCommanded * constants.kMaxSpeed
+    xSpeedDelivered = xSpeedCommanded * constants.kMaxSpeedMetersPerSecond
+    ySpeedDelivered = ySpeedCommanded * constants.kMaxSpeedMetersPerSecond
     rotDelivered = self.currentRotation * constants.kMaxAngularSpeed
 
     (fl, fr, bl, br) = self.kDriveKinematics.toSwerveModuleStates(
@@ -230,7 +229,9 @@ class DriveSubsystem:
   def setModuleStates(
     self, desiredStates: tuple[wpimath.kinematics.SwerveModuleState]
   ) -> None:
-    self.kDriveKinematics.desaturateWheelSpeeds(desiredStates, constants.kMaxSpeed)
+    self.kDriveKinematics.desaturateWheelSpeeds(
+      desiredStates, constants.kMaxSpeedMetersPerSecond
+    )
 
     self.frontLeft.setDesiredState(desiredStates[0])
     self.frontRight.setDesiredState(desiredStates[1])
