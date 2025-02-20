@@ -40,16 +40,20 @@ class MyRobot(wpilib.TimedRobot):
 
     # temporary feedback for testing
     wpilib.SmartDashboard.putNumber(
-      "Driver Left X (xSpeed)", int(self.driverController.getLeftX())
+      "Driver Left X (xSpeed)",
+      wpimath.applyDeadband(self.driverController.getLeftX(), 0.08),
     )
     wpilib.SmartDashboard.putNumber(
-      "Driver Left Y (ySpeed)", int(self.driverController.getLeftY())
+      "Driver Left Y (ySpeed)",
+      wpimath.applyDeadband(self.driverController.getLeftY(), 0.08),
     )
     wpilib.SmartDashboard.putNumber(
-      "Driver Right X (Rotation)", int(self.driverController.getRightX())
+      "Driver Right X (Rotation)",
+      wpimath.applyDeadband(self.driverController.getRightX(), 0.08),
     )
     wpilib.SmartDashboard.putNumber(
-      "Driver Right Y (unused)", int(self.driverController.getRightY())
+      "Driver Right Y (unused)",
+      wpimath.applyDeadband(self.driverController.getRightY(), 0.08),
     )
 
   def testPeriodic(self) -> None:
