@@ -58,7 +58,7 @@ class DriveSubsystem:
     )
 
     # the gyro sensor
-    self.gyro = navx.AHRS(wpilib.SerialPort.Port.kUSB)
+    self.gyro = navx.AHRS(navx.AHRS.NavXComType.kMXP_SPI)
 
     # Slew rate filter variables for controlling the lateral acceleration
     self.currentRotation = 0.0

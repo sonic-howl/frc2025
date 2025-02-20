@@ -38,6 +38,20 @@ class MyRobot(wpilib.TimedRobot):
     # Teleop periodic logic
     self.driveWithJoystick(True)
 
+    # temporary feedback for testing
+    wpilib.SmartDashboard.putNumber(
+      "Driver Left X (xSpeed)", int(self.driverController.getLeftX())
+    )
+    wpilib.SmartDashboard.putNumber(
+      "Driver Left Y (ySpeed)", int(self.driverController.getLeftY())
+    )
+    wpilib.SmartDashboard.putNumber(
+      "Driver Right X (Rotation)", int(self.driverController.getRightX())
+    )
+    wpilib.SmartDashboard.putNumber(
+      "Driver Right Y (unused)", int(self.driverController.getRightY())
+    )
+
   def testPeriodic(self) -> None:
     pass
 
