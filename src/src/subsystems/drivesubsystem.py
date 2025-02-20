@@ -1,7 +1,8 @@
 import math
 
 import navx
-import networklogger
+
+# import networklogger
 import ntcore
 import wpilib
 import wpimath.filter

@@ -41,16 +41,16 @@ kBackLeftChassisAngularOffset = math.pi
 kBackRightChassisAngularOffset = math.pi / 2
 
 kFrontLeftTurnMotorId = 10
-kFrontLeftDriveMotorId = 11
+kFrontLeftDriveMotorId = 9
 
 kFrontRightTurnMotorId = 12
-kFrontRightDriveMotorId = 13
+kFrontRightDriveMotorId = 11
 
 kBackLeftTurnMotorId = 14
-kBackLeftDriveMotorId = 15
+kBackLeftDriveMotorId = 13
 
 kBackRightTurnMotorId = 16
-kBackRightDriveMotorId = 17
+kBackRightDriveMotorId = 15
 
 
 ### Swerve Module Constants
