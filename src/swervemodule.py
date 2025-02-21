@@ -29,31 +29,76 @@ class SwerveModule:
     """
 
     """ Initialize Spark Max motor controllers"""
-    self.DriveSparkMax: rev.SparkBase = rev.SparkBase(
-      DriveMotorChannel,
-      rev.SparkBase.MotorType.kBrushless,
-      rev._rev.SparkLowLevel.SparkModel.kSparkMax,
+    self.DriveSparkMax = rev.SparkMax(
+      DriveMotorChannel, rev.SparkBase.MotorType.kBrushless
     )
-    self.TurnSparkMax: rev.SparkBase = rev.SparkBase(
-      TurnMotorChannel,
-      rev.SparkBase.MotorType.kBrushless,
-      rev._rev.SparkLowLevel.SparkModel.kSparkMax,
+    self.TurnSparkMax = rev.SparkMax(
+      TurnMotorChannel, rev.SparkBase.MotorType.kBrushless
     )
 
     """ Initialize Spark Max encoders"""
     # Get Encoder Objects from Spark Max
-    self.DriveEncoder: rev.SparkRelativeEncoder = self.DriveSparkMax.getEncoder(
+    self.DriveEncoder = self.DriveSparkMax.getEncoder(
       # rev.SparkMaxRelativeEncoder.Type.kHallSensor
     )
-    self.TurnEncoder: rev.SparkAbsoluteEncoder = self.TurnSparkMax.getAbsoluteEncoder(
+    self.TurnEncoder = self.TurnSparkMax.getAbsoluteEncoder(
       # rev.SparkMaxAbsoluteEncoder.Type.kDutyCycle
     )
 
     """ Initialize PID Controllers"""
     # create spark max pid controllers
-    self.DriveClosedLoopController = self.DriveSparkMax.getClosedLoopController()
 
     self.TurnClosedLoopController = self.TurnSparkMax.getClosedLoopController()
+
+    cl_config = rev.ClosedLoopConfig()
+    cl_config.pid(1, 0, 0)
+    cl_config.positionWrappingEnabled(True)
+    cl_config.positionWrappingInputRange(0, math.pi * 2)
+    cl_config.outputRange(-1, 1)
+
+    config = rev.SparkBaseConfig()
+    config.apply(cl_config)
+    self.TurnSparkMax.configure(
+      config,
+      rev.SparkMax.ResetMode.kResetSafeParameters,
+      rev.SparkMax.PersistMode.kPersistParameters,
+    )
+
+    #
+
+    encoder_config = rev.AbsoluteEncoderConfig()
+    encoder_config.positionConversionFactor(math.pi * 2)
+    encoder_config.velocityConversionFactor((math.pi * 2) / 60)
+    encoder_config.inverted(True)
+    encoder_config.zeroOffset(math.pi / 2)
+    encoder_config.setSparkMaxDataPortConfig()
+
+    config = rev.SparkBaseConfig()
+    config.apply(encoder_config)
+    self.TurnSparkMax.configure(
+      config,
+      rev.SparkMax.ResetMode.kResetSafeParameters,
+      rev.SparkMax.PersistMode.kPersistParameters,
+    )
+
+    self.DriveClosedLoopController = self.DriveSparkMax.getClosedLoopController()
+
+    # self.TurnSparkMax.
+    # self.DriveClosedLoopController.setIAccum(0.05)
+    # self.TurnClosedLoopController.setIAccum(0.05)
+
+    # wpilib.SmartDashboard.putNumber(
+    #   "Drive IAccum", self.DriveClosedLoopController.getIAccum()
+    # )
+    # wpilib.SmartDashboard.putNumber(
+    #   "Drive PercentOut", self.DriveClosedLoopController.ArbFFUnits.kPercentOut.value
+    # )
+    # wpilib.SmartDashboard.putNumber(
+    #   "Turn IAccum", self.TurnClosedLoopController.getIAccum()
+    # )
+    # wpilib.SmartDashboard.putNumber(
+    #   "Turn PercentOut", self.TurnClosedLoopController.ArbFFUnits.kPercentOut.value
+    # )
 
     # Swerve Drive parameters
     self.chassisAngularOffset = chassisAngularOffset
@@ -100,7 +145,12 @@ class SwerveModule:
     TurnEncoderPosition = wpimath.geometry.Rotation2d(self.TurnEncoder.getPosition())
     # Optimize the reference state to avoid spinning further than 90 degrees
     correctedDesiredState.optimize(TurnEncoderPosition)
-
+    wpilib.SmartDashboard.putNumber(
+      "correctDesiredState.speed", correctedDesiredState.speed
+    )
+    wpilib.SmartDashboard.putNumber(
+      "correctDesiredState.angle", correctedDesiredState.angle.radians()
+    )
     # Command Drive and Turn SPARK MAX toward their respective setpoints
     self.DriveClosedLoopController.setReference(
       correctedDesiredState.speed, rev.SparkBase.ControlType.kVelocity

@@ -9,7 +9,7 @@ import wpimath.controller
 import wpimath.filter
 
 import constants
-from subsystems import drivesubsystem
+from subsystems.drivesubsystem import DriveSubsystem
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -18,12 +18,13 @@ class MyRobot(wpilib.TimedRobot):
   def robotInit(self) -> None:
     """Robot initialization function"""
     self.driverController = wpilib.XboxController(constants.kDriverControllerPort)
-    self.swerve = drivesubsystem.DriveSubsystem()
+    self.swerve = DriveSubsystem()
 
     # Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
     self.xspeedLimiter = wpimath.filter.SlewRateLimiter(3)
     self.yspeedLimiter = wpimath.filter.SlewRateLimiter(3)
     self.rotLimiter = wpimath.filter.SlewRateLimiter(3)
+    self.doRateLimiting = False
 
   def autonomousInit(self) -> None:
     pass
@@ -36,25 +37,7 @@ class MyRobot(wpilib.TimedRobot):
 
   def teleopPeriodic(self) -> None:
     # Teleop periodic logic
-    self.driveWithJoystick(True)
-
-    # temporary feedback for testing
-    wpilib.SmartDashboard.putNumber(
-      "Driver Left X (xSpeed)",
-      wpimath.applyDeadband(self.driverController.getLeftX(), 0.08),
-    )
-    wpilib.SmartDashboard.putNumber(
-      "Driver Left Y (ySpeed)",
-      wpimath.applyDeadband(self.driverController.getLeftY(), 0.08),
-    )
-    wpilib.SmartDashboard.putNumber(
-      "Driver Right X (Rotation)",
-      wpimath.applyDeadband(self.driverController.getRightX(), 0.08),
-    )
-    wpilib.SmartDashboard.putNumber(
-      "Driver Right Y (unused)",
-      wpimath.applyDeadband(self.driverController.getRightY(), 0.08),
-    )
+    self.driveWithJoystick(fieldRelative=False)
 
   def testPeriodic(self) -> None:
     pass
@@ -62,19 +45,14 @@ class MyRobot(wpilib.TimedRobot):
   def driveWithJoystick(self, fieldRelative: bool) -> None:
     # Get the x speed. We are inverting this because Xbox controllers return
     # negative values when we push forward.
-    xSpeed = (
-      -self.xspeedLimiter.calculate(
-        wpimath.applyDeadband(self.driverController.getLeftY(), 0.08)
-      )
-      # * drivesubsystem.kMaxSpeed
-    )
+    xSpeed = self.driverController.getLeftX()
 
     # Get the y speed or sideways/strafe speed. We are inverting this because
     # we want a positive value when we pull to the left. Xbox controllers
     # return positive values when you pull to the right by default.
     ySpeed = (
       -self.yspeedLimiter.calculate(
-        wpimath.applyDeadband(self.driverController.getLeftX(), 0.08)
+        wpimath.applyDeadband(self.driverController.getLeftY(), 0.08)
       )
       # * drivesubsystem.kMaxSpeed
     )
@@ -89,8 +67,12 @@ class MyRobot(wpilib.TimedRobot):
       )
       # * drivesubsystem.kMaxSpeed
     )
+    self.swerve.drive(xSpeed, ySpeed, rot, fieldRelative, rateLimit=self.doRateLimiting)
 
-    self.swerve.drive(xSpeed, ySpeed, rot, fieldRelative, rateLimit=True)
+    wpilib.SmartDashboard.putBoolean("RateLimit", self.doRateLimiting)
+    wpilib.SmartDashboard.putNumber("xSpeed", xSpeed)
+    wpilib.SmartDashboard.putNumber("ySpeed", ySpeed)
+    wpilib.SmartDashboard.putNumber("rot", rot)
 
 
 if __name__ == "__main__":
