@@ -22,10 +22,10 @@ class RobotContainer:
     self.configureButtonBindings()
     self.configureAuto()
 
-    self.fieldRelative = False
+    self.fieldRelative = True
 
     self.driveSubsystem.setDefaultCommand(
-      RunCommand(
+      cmd.run(
         lambda: self.driveSubsystem.drive(
           wpimath.applyDeadband(
             self.driverController.getLeftX(), ControllerConstants.kDriveDeadband
@@ -51,9 +51,7 @@ class RobotContainer:
     #   cmd.runOnce(lambda: print("Y Button Pressed (Operator)"))
     # )
     self.driverXButton = self.driverController.x()
-    self.driverXButton.onTrue(
-      cmd.runOnce(self.driveSubsystem.setX(), self.driveSubsystem)
-    )
+    self.driverXButton.whileTrue(cmd.run(self.driveSubsystem.setX, self.driveSubsystem))
 
   def configureAuto(self):
     self.autoSelector = wpilib.SendableChooser()

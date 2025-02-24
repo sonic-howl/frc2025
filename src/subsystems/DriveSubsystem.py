@@ -17,23 +17,23 @@ class DriveSubsystem(Subsystem):
     super().__init__()
 
     self.frontLeft = SwerveModule(
-      DriveSubsystemConstants.kFrontLeftTurningMotorId,
       DriveSubsystemConstants.kFrontLeftDriveMotorId,
+      DriveSubsystemConstants.kFrontLeftTurningMotorId,
       DriveSubsystemConstants.kFrontLeftChassisAngularOffset,
     )
     self.frontRight = SwerveModule(
-      DriveSubsystemConstants.kFrontRightTurningMotorId,
       DriveSubsystemConstants.kFrontRightDriveMotorId,
+      DriveSubsystemConstants.kFrontRightTurningMotorId,
       DriveSubsystemConstants.kFrontRightChassisAngularOffset,
     )
     self.backLeft = SwerveModule(
-      DriveSubsystemConstants.kBackLeftTurningMotorId,
       DriveSubsystemConstants.kBackLeftDriveMotorId,
+      DriveSubsystemConstants.kBackLeftTurningMotorId,
       DriveSubsystemConstants.kBackLeftChassisAngularOffset,
     )
     self.backRight = SwerveModule(
-      DriveSubsystemConstants.kBackRightTurningMotorId,
       DriveSubsystemConstants.kBackRightDriveMotorId,
+      DriveSubsystemConstants.kBackRightTurningMotorId,
       DriveSubsystemConstants.kBackRightChassisAngularOffset,
     )
 

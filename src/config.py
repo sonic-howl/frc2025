@@ -1,48 +1,48 @@
 import math
 
-from phoenix6 import configs
-from phoenix6.signals import FeedbackSensorSourceValue
-from phoenix6.signals.spn_enums import NeutralModeValue
-from rev import ClosedLoopConfig, SparkBaseConfig, SparkMaxConfig
+from rev import AbsoluteEncoderConfig, ClosedLoopConfig, EncoderConfig, SparkBaseConfig
+
+from constants import SwerveModuleConstants
 
 
 class Config:
   class MAXSwerveModule:
-    turnConfig = SparkMaxConfig()
-
     kTurningFactor = 2 * math.pi
 
+    turnConfig = SparkBaseConfig()
     turnConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20)
 
-    turnConfig.absoluteEncoder.inverted(True).positionConversionFactor(
+    turnEncoderConfig = AbsoluteEncoderConfig()
+    turnEncoderConfig.inverted(True).positionConversionFactor(
       kTurningFactor
     ).velocityConversionFactor(kTurningFactor / 60.0)  # Radians per Second
+    turnConfig.apply(turnEncoderConfig)
 
     # TODO: Calibrate PID Controller
-    turnConfig.closedLoop.setFeedbackSensor(
+    turnClosedLoopConfig = ClosedLoopConfig()
+    turnClosedLoopConfig.setFeedbackSensor(
       ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder
-    ).pid(0, 0, 0).outputRange(-1, 1).positionWrappingEnabled(
+    ).pid(1, 0, 0).outputRange(-1, 1).positionWrappingEnabled(
       True
     ).positionWrappingInputRange(0, kTurningFactor)
+    turnConfig.apply(turnClosedLoopConfig)
 
-  class TalonSwerveModule:
-    driveConfig = configs.TalonFXConfiguration()
+    driveConfig = SparkBaseConfig()
+    drivingFactor = (
+      SwerveModuleConstants.kWheelDiameter / SwerveModuleConstants.kDriveMotorReduction
+    )
 
-    driveConfig.feedback.feedback_sensor_source = FeedbackSensorSourceValue.ROTOR_SENSOR
+    drivingVelocityFeedForward = 0
 
-    # Might be needed to convert sensor values to useful units
-    # driveConfig.feedback.sensor_to_mechanism_ratio
+    driveConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(50)
 
-    driveConfig.motor_output.neutral_mode = NeutralModeValue.BRAKE
-    # driveConfig.voltage.peak_forward_voltage = 16
-    # driveConfig.voltage.peak_reverse_voltage = -16
-    driveConfig.current_limits.stator_current_limit = 120  # AMPS
-    driveConfig.current_limits.stator_current_limit_enable = True
-    driveConfig.current_limits.supply_current_limit = 70  # AMPS
-    driveConfig.current_limits.supply_current_limit_enable = True
+    driveEncoderConfig = EncoderConfig()
+    driveEncoderConfig.positionConversionFactor(drivingFactor)
+    driveEncoderConfig.velocityConversionFactor(drivingFactor / 60)
+    driveConfig.apply(driveEncoderConfig)
 
-    # Closed Loop Control
-    driveConfig.slot0.k_p = 0.1
-    driveConfig.slot0.k_d = 0
-    driveConfig.slot0.k_i = 0
-    # driveConfig.slot0.k_v = 0 #TODO: Needs Calibration
+    driveClosedLoopConfig = ClosedLoopConfig()
+    driveClosedLoopConfig.setFeedbackSensor(
+      ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
+    ).pid(0.04, 0, 0).velocityFF(drivingVelocityFeedForward).outputRange(-1, 1)
+    driveConfig.apply(driveClosedLoopConfig)

@@ -1,4 +1,4 @@
-from phoenix6 import controls, hardware
+# from phoenix6 import controls, hardware
 from rev import SparkBase, SparkLowLevel, SparkMax
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
@@ -11,8 +11,8 @@ from constants import SwerveModuleConstants
 class SwerveModule:
   def __init__(
     self,
-    turnMotorId: int,
     driveMotorId: int,
+    turnMotorId: int,
     chassisAngularOffset: float = 0,
     invertTurnEncoder: bool = False,
   ):
@@ -27,8 +27,24 @@ class SwerveModule:
     self.desiredState = SwerveModuleState(0.0, Rotation2d())
 
     ### Motors and Configuration ###
-    self.driveMotor = hardware.TalonFX(driveMotorId)
+    self.driveMotor = SparkMax(driveMotorId, SparkMax.MotorType.kBrushless)
     self.turnMotor = SparkMax(turnMotorId, SparkMax.MotorType.kBrushless)
+
+    # Any unmodified configs in a configuration object are *automatically* factory-defaulted. If you want to explicitly factory reset the config, use: self.driveMotor.configurator.apply(configs.TalonFXConfiguration())
+    # self.driveMotor.configurator.apply(Config.TalonSwerveModule.driveConfig)
+    ### Encoders ###
+    self.driveEncorder = self.driveMotor.getEncoder()
+    self.turnEncoder = self.turnMotor.getAbsoluteEncoder()
+
+    ### Closed Loop Controllers ### (Drive Motor can only get the CLC output, not the CLC object)
+    self.driveClosedLoopController = self.driveMotor.getClosedLoopController()
+    self.turnClosedLoopController = self.turnMotor.getClosedLoopController()
+
+    self.driveMotor.configure(
+      Config.MAXSwerveModule.driveConfig,
+      SparkBase.ResetMode.kResetSafeParameters,
+      SparkBase.PersistMode.kPersistParameters,
+    )
 
     self.turnMotor.configure(
       Config.MAXSwerveModule.turnConfig,
@@ -36,37 +52,22 @@ class SwerveModule:
       SparkBase.PersistMode.kPersistParameters,
     )
 
-    # Any unmodified configs in a configuration object are *automatically* factory-defaulted. If you want to explicitly factory reset the config, use: self.driveMotor.configurator.apply(configs.TalonFXConfiguration())
-    self.driveMotor.configurator.apply(Config.TalonSwerveModule.driveConfig)
-
-    ### Encoders ### (Talon FX Encoder is Built In; No need to store it)
-    self.turnEncoder = self.turnMotor.getAbsoluteEncoder()
-
-    ### Closed Loop Controllers ### (Drive Motor can only get the CLC output, not the CLC object)
-    self.turnClosedLoopController = self.turnMotor.getClosedLoopController()
-
     self.desiredState.angle = Rotation2d(self.turnEncoder.getPosition())
     self.resetDriveEncoder()
 
   def getState(self) -> SwerveModuleState:
     """Returns the current state of the module."""
 
-    # TODO: self.driveMotor.get_velocity() needs to be converted to m/s. See: https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/src/main/java/frc/robot/Configs.java
     return SwerveModuleState(
-      SwerveModuleConstants.driveMotorRotationsToMeters(
-        self.driveMotor.get_velocity().value_as_double
-      ),
+      self.driveEncorder.getVelocity(),
       Rotation2d(self.turnEncoder.getPosition() - self.chassisAngularOffset),
     )
 
   def getPosition(self) -> SwerveModulePosition:
     """Returns the current position of the module."""
 
-    # TODO: self.driveMotor.get_position() needs to be converted to meters. See: https://github.com/REVrobotics/MAXSwerve-Java-Template/blob/main/src/main/java/frc/robot/Configs.java
     return SwerveModulePosition(
-      SwerveModuleConstants.driveMotorRotationsToMeters(
-        self.driveMotor.get_position().value_as_double
-      ),
+      self.driveEncorder.getPosition(),
       Rotation2d(self.turnEncoder.getPosition() - self.chassisAngularOffset),
     )
 
@@ -85,13 +86,8 @@ class SwerveModule:
     correctDesiredState.optimize(Rotation2d(self.turnEncoder.getPosition()))
 
     # Command driving and turning motors towards their respective setpoints.
-    # TODO: Need to convert correctedDesiredState from m/s to native units.
-    self.driveMotor.set_control(
-      controls.VelocityDutyCycle(
-        SwerveModuleConstants.driveMotorMetersPerSecondToRotationsPerSecond(
-          correctDesiredState.speed
-        )
-      )
+    self.driveClosedLoopController.setReference(
+      correctDesiredState.speed, SparkLowLevel.ControlType.kVelocity
     )
     self.turnClosedLoopController.setReference(
       correctDesiredState.angle.radians(), SparkLowLevel.ControlType.kPosition
@@ -100,4 +96,4 @@ class SwerveModule:
     self.desiredState = desiredState
 
   def resetDriveEncoder(self) -> None:
-    self.driveMotor.set_position(0)
+    self.driveEncorder.setPosition(0)
