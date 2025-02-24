@@ -97,9 +97,5 @@ kTurnFF = 0
 kTurnMinOutput = -1
 kTurnMaxOutput = 1
 
-kDriveMotorIdleMode: rev.SparkBaseConfig.IdleMode = (
-  rev._rev.SparkBaseConfig().IdleMode.kCoast
-)
-kTurnMotorIdleMode: rev.SparkBaseConfig.IdleMode = (
-  rev._rev.SparkBaseConfig().IdleMode.kCoast
-)
+kDriveMotorIdleMode = rev.SparkBaseConfig.IdleMode.kBrake
+kTurnMotorIdleMode = rev.SparkBaseConfig.IdleMode.kBrake

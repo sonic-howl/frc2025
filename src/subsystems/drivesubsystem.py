@@ -200,10 +200,7 @@ class DriveSubsystem:
     )
 
     # Set the swerve modules to desired states
-    self.frontLeft.setDesiredState(fl)
-    self.frontRight.setDesiredState(fr)
-    self.backLeft.setDesiredState(bl)
-    self.backRight.setDesiredState(br)
+    self.setModuleStates((fl, fr, bl, br))
 
   def setX(self) -> None:
     self.frontLeft.setDesiredState(

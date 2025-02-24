@@ -56,16 +56,6 @@ class SwerveModule:
     cl_config.positionWrappingInputRange(0, math.pi * 2)
     cl_config.outputRange(-1, 1)
 
-    config = rev.SparkBaseConfig()
-    config.apply(cl_config)
-    self.TurnSparkMax.configure(
-      config,
-      rev.SparkMax.ResetMode.kResetSafeParameters,
-      rev.SparkMax.PersistMode.kPersistParameters,
-    )
-
-    #
-
     encoder_config = rev.AbsoluteEncoderConfig()
     encoder_config.positionConversionFactor(math.pi * 2)
     encoder_config.velocityConversionFactor((math.pi * 2) / 60)
@@ -74,6 +64,7 @@ class SwerveModule:
     encoder_config.setSparkMaxDataPortConfig()
 
     config = rev.SparkBaseConfig()
+    config.apply(cl_config)
     config.apply(encoder_config)
     self.TurnSparkMax.configure(
       config,
