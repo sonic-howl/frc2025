@@ -1,5 +1,15 @@
 # from phoenix6 import controls, hardware
-from rev import SparkBase, SparkLowLevel, SparkMax
+import math
+
+from rev import (
+  AbsoluteEncoderConfig,
+  ClosedLoopConfig,
+  EncoderConfig,
+  SparkBase,
+  SparkBaseConfig,
+  SparkLowLevel,
+  SparkMax,
+)
 from wpimath.geometry import Rotation2d
 from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 from wpimath.units import radiansToDegrees
@@ -14,7 +24,6 @@ class SwerveModule:
     driveMotorId: int,
     turnMotorId: int,
     chassisAngularOffset: float = 0,
-    invertTurnEncoder: bool = False,
   ):
     """Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
 
@@ -40,14 +49,55 @@ class SwerveModule:
     self.driveClosedLoopController = self.driveMotor.getClosedLoopController()
     self.turnClosedLoopController = self.turnMotor.getClosedLoopController()
 
+    ### Drive and Trun Motor Configurations ###
+    self.kTurningFactor = 2 * math.pi
+
+    self.turnConfig = SparkBaseConfig()
+    self.turnConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20)
+
+    self.turnEncoderConfig = AbsoluteEncoderConfig()
+    self.turnEncoderConfig.inverted(True).positionConversionFactor(
+      self.kTurningFactor
+    ).velocityConversionFactor(self.kTurningFactor / 60.0)  # Radians per Second
+    self.turnConfig.apply(self.turnEncoderConfig)
+
+    # TODO: Calibrate PID Controller
+    self.turnClosedLoopConfig = ClosedLoopConfig()
+    self.turnClosedLoopConfig.setFeedbackSensor(
+      ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder
+    ).pid(1, 0, 0).outputRange(-1, 1).positionWrappingEnabled(
+      True
+    ).positionWrappingInputRange(0, self.kTurningFactor)
+    self.turnConfig.apply(self.turnClosedLoopConfig)
+
+    self.driveConfig = SparkBaseConfig()
+    self.drivingFactor = (
+      SwerveModuleConstants.kWheelDiameter / SwerveModuleConstants.kDriveMotorReduction
+    )
+
+    self.drivingVelocityFeedForward = 0
+
+    self.driveConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(50)
+
+    self.driveEncoderConfig = EncoderConfig()
+    self.driveEncoderConfig.positionConversionFactor(self.drivingFactor)
+    self.driveEncoderConfig.velocityConversionFactor(self.drivingFactor / 60)
+    self.driveConfig.apply(self.driveEncoderConfig)
+
+    self.driveClosedLoopConfig = ClosedLoopConfig()
+    self.driveClosedLoopConfig.setFeedbackSensor(
+      ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
+    ).pid(0.04, 0, 0).velocityFF(self.drivingVelocityFeedForward).outputRange(-1, 1)
+    self.driveConfig.apply(self.driveClosedLoopConfig)
+
     self.driveMotor.configure(
-      Config.MAXSwerveModule.driveConfig,
+      self.driveConfig,
       SparkBase.ResetMode.kResetSafeParameters,
       SparkBase.PersistMode.kPersistParameters,
     )
 
     self.turnMotor.configure(
-      Config.MAXSwerveModule.turnConfig,
+      self.turnConfig,
       SparkBase.ResetMode.kResetSafeParameters,
       SparkBase.PersistMode.kPersistParameters,
     )

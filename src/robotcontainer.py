@@ -3,6 +3,10 @@ import wpimath
 from commands2 import Command, RunCommand, cmd
 from commands2.button import CommandXboxController
 from wpilib import SmartDashboard
+from wpimath.geometry import Rotation2d
+from wpimath.kinematics import (
+  SwerveModuleState,
+)
 
 from constants import ControllerConstants
 from subsystems.DriveSubsystem import DriveSubsystem
@@ -25,7 +29,7 @@ class RobotContainer:
     self.fieldRelative = True
 
     self.driveSubsystem.setDefaultCommand(
-      cmd.run(
+      RunCommand(
         lambda: self.driveSubsystem.drive(
           wpimath.applyDeadband(
             self.driverController.getLeftX(), ControllerConstants.kDriveDeadband
@@ -52,6 +56,16 @@ class RobotContainer:
     # )
     self.driverXButton = self.driverController.x()
     self.driverXButton.whileTrue(cmd.run(self.driveSubsystem.setX, self.driveSubsystem))
+
+    self.driverYButton = self.driverController.y()
+    self.driverYButton.whileTrue(
+      cmd.run(
+        lambda: self.driveSubsystem.frontLeft.setDesiredState(
+          SwerveModuleState(1, Rotation2d.fromDegrees(90))
+        ),
+        self.driveSubsystem,
+      )
+    )
 
   def configureAuto(self):
     self.autoSelector = wpilib.SendableChooser()
