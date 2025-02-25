@@ -101,6 +101,9 @@ class DriveSubsystem(Subsystem):
     self.backLeft.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(-45)))
     self.backRight.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(45)))
 
+  def setFrontLeft(self):
+    self.frontLeft.setDesiredState(SwerveModuleState(1, Rotation2d.fromDegrees(90)))
+
   def drive(
     self, xSpeed: float, ySpeed: float, rot: float, fieldRelative: bool
   ) -> None:

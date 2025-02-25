@@ -55,20 +55,20 @@ class SwerveModule:
     self.turnConfig = SparkBaseConfig()
     self.turnConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20)
 
-    self.turnEncoderConfig = AbsoluteEncoderConfig()
-    self.turnEncoderConfig.inverted(True).positionConversionFactor(
+    # self.turnEncoderConfig = AbsoluteEncoderConfig()
+    self.turnConfig.absoluteEncoder.inverted(True).positionConversionFactor(
       self.kTurningFactor
     ).velocityConversionFactor(self.kTurningFactor / 60.0)  # Radians per Second
-    self.turnConfig.apply(self.turnEncoderConfig)
+    # self.turnConfig.apply(self.turnEncoderConfig)
 
     # TODO: Calibrate PID Controller
-    self.turnClosedLoopConfig = ClosedLoopConfig()
-    self.turnClosedLoopConfig.setFeedbackSensor(
+    # self.turnClosedLoopConfig = ClosedLoopConfig()
+    self.turnConfig.closedLoop.setFeedbackSensor(
       ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder
     ).pid(1, 0, 0).outputRange(-1, 1).positionWrappingEnabled(
       True
     ).positionWrappingInputRange(0, self.kTurningFactor)
-    self.turnConfig.apply(self.turnClosedLoopConfig)
+    # self.turnConfig.apply(self.turnClosedLoopConfig)
 
     self.driveConfig = SparkBaseConfig()
     self.drivingFactor = (
@@ -77,18 +77,20 @@ class SwerveModule:
 
     self.drivingVelocityFeedForward = 0
 
-    self.driveConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(50)
+    self.driveConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(
+      50
+    ).inverted(True)
 
-    self.driveEncoderConfig = EncoderConfig()
-    self.driveEncoderConfig.positionConversionFactor(self.drivingFactor)
-    self.driveEncoderConfig.velocityConversionFactor(self.drivingFactor / 60)
-    self.driveConfig.apply(self.driveEncoderConfig)
+    # self.driveEncoderConfig = EncoderConfig()
+    self.driveConfig.encoder.positionConversionFactor(self.drivingFactor)
+    self.driveConfig.encoder.velocityConversionFactor(self.drivingFactor / 60)
+    # self.driveConfig.apply(self.driveEncoderConfig)
 
-    self.driveClosedLoopConfig = ClosedLoopConfig()
-    self.driveClosedLoopConfig.setFeedbackSensor(
+    # self.driveClosedLoopConfig = ClosedLoopConfig()
+    self.driveConfig.closedLoop.setFeedbackSensor(
       ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
     ).pid(0.04, 0, 0).velocityFF(self.drivingVelocityFeedForward).outputRange(-1, 1)
-    self.driveConfig.apply(self.driveClosedLoopConfig)
+    # self.driveConfig.apply(self.driveClosedLoopConfig)
 
     self.driveMotor.configure(
       self.driveConfig,
