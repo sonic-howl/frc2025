@@ -12,9 +12,7 @@ class RobotContainer:
   def __init__(self):
     self.driveSubsystem = DriveSubsystem()
 
-    self.driverController = CommandXboxController(
-      ControllerConstants.kDriverControllerPort
-    )
+    self.driverController = CommandXboxController(ControllerConstants.kDriverControllerPort)
     # self.operatorController = CommandXboxController(
     #   ControllerConstants.kOperatorControllerPort
     # )
@@ -27,15 +25,9 @@ class RobotContainer:
     self.driveSubsystem.setDefaultCommand(
       RunCommand(
         lambda: self.driveSubsystem.drive(
-          wpimath.applyDeadband(
-            self.driverController.getLeftX(), ControllerConstants.kDriveDeadband
-          ),
-          wpimath.applyDeadband(
-            -self.driverController.getLeftY(), ControllerConstants.kDriveDeadband
-          ),
-          wpimath.applyDeadband(
-            self.driverController.getRightX(), ControllerConstants.kDriveDeadband
-          ),
+          wpimath.applyDeadband(self.driverController.getLeftX(), ControllerConstants.kDriveDeadband),
+          wpimath.applyDeadband(-self.driverController.getLeftY(), ControllerConstants.kDriveDeadband),
+          wpimath.applyDeadband(self.driverController.getRightX(), ControllerConstants.kDriveDeadband),
           self.fieldRelative,
         ),
         self.driveSubsystem,
@@ -53,22 +45,10 @@ class RobotContainer:
     self.driverXButton = self.driverController.x()
     self.driverXButton.whileTrue(cmd.run(self.driveSubsystem.setX, self.driveSubsystem))
 
-    self.driverYButton = self.driverController.y()
-    self.driverYButton.whileTrue(
-      cmd.run(
-        self.driveSubsystem.setFrontLeft,
-        self.driveSubsystem,
-      )
-    )
-
   def configureAuto(self):
     self.autoSelector = wpilib.SendableChooser()
-    self.autoSelector.setDefaultOption(
-      "Default Option (test)", cmd.runOnce(lambda: print("Default Autonomous Command"))
-    )
-    self.autoSelector.addOption(
-      "Test Option", cmd.runOnce(lambda: print("Test Autonomous Command"))
-    )
+    self.autoSelector.setDefaultOption("Default Option (test)", cmd.runOnce(lambda: print("Default Autonomous Command")))
+    self.autoSelector.addOption("Test Option", cmd.runOnce(lambda: print("Test Autonomous Command")))
     SmartDashboard.putData("AutoSelector", self.autoSelector)
 
   def getAutonomousCommand(self) -> Command:
