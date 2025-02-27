@@ -1,38 +1,44 @@
 import math
 
-from rev import AbsoluteEncoderConfig, ClosedLoopConfig, EncoderConfig, SparkBaseConfig
+from rev import ClosedLoopConfig, SparkBaseConfig
 
 from constants import SwerveModuleConstants
 
 
 class Config:
   class MAXSwerveModule:
-    kTurningFactor = 2 * math.pi
+    ### Drive Motor Configurations ###
+    kTurningFactor = 2 * math
 
     turnConfig = SparkBaseConfig()
     turnConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20)
 
-    turnEncoderConfig = AbsoluteEncoderConfig()
-    turnEncoderConfig.inverted(True).positionConversionFactor(kTurningFactor).velocityConversionFactor(kTurningFactor / 60.0)  # Radians per Second
-    turnConfig.apply(turnEncoderConfig)
+    turnConfig.absoluteEncoder.inverted(True).positionConversionFactor(
+      kTurningFactor
+    ).velocityConversionFactor(kTurningFactor / 60.0)  # Radians per Second
 
     # TODO: Calibrate PID Controller
-    turnClosedLoopConfig = ClosedLoopConfig()
-    turnClosedLoopConfig.setFeedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder).pid(1, 0, 0).outputRange(-1, 1).positionWrappingEnabled(True).positionWrappingInputRange(0, kTurningFactor)
-    turnConfig.apply(turnClosedLoopConfig)
+    turnConfig.closedLoop.setFeedbackSensor(
+      ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder
+    ).pid(1, 0, 0).outputRange(-1, 1).positionWrappingEnabled(
+      True
+    ).positionWrappingInputRange(0, kTurningFactor)
 
-    driveConfig = SparkBaseConfig()
-    drivingFactor = SwerveModuleConstants.kWheelDiameter / SwerveModuleConstants.kDriveMotorReduction
-
+    ### Trun Motor Config ###
+    drivingFactor = (
+      SwerveModuleConstants.kWheelDiameter / SwerveModuleConstants.kDriveMotorReduction
+    )
     drivingVelocityFeedForward = 0
+    driveConfig = SparkBaseConfig()
 
-    driveConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(50)
+    driveConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(
+      50
+    ).inverted(True)
 
-    driveEncoderConfig = EncoderConfig()
-    driveEncoderConfig.positionConversionFactor(drivingFactor)
-    driveEncoderConfig.velocityConversionFactor(drivingFactor / 60)
-    driveConfig.apply(driveEncoderConfig)
+    driveConfig.encoder.positionConversionFactor(
+      drivingFactor
+    ).velocityConversionFactor(drivingFactor / 60)
 
-    driveClosedLoopConfig = ClosedLoopConfig()
-    driveClosedLoopConfig.setFeedbackSensor(ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder).pid(0.04, 0, 0).velocityFF(drivingVelocityFeedForward).outputRange(-1, 1)
-    driveConfig.apply(driveClosedLoopConfig)
+    driveConfig.closedLoop.setFeedbackSensor(
+      ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
+    ).pid(0.04, 0, 0).velocityFF(drivingVelocityFeedForward).outputRange(-1, 1)

@@ -1,12 +1,5 @@
-# from phoenix6 import controls, hardware
-import math
-
 from rev import (
-  AbsoluteEncoderConfig,
-  ClosedLoopConfig,
-  EncoderConfig,
   SparkBase,
-  SparkBaseConfig,
   SparkLowLevel,
   SparkMax,
 )
@@ -15,7 +8,6 @@ from wpimath.kinematics import SwerveModulePosition, SwerveModuleState
 from wpimath.units import radiansToDegrees
 
 from config import Config
-from constants import SwerveModuleConstants
 
 
 class SwerveModule:
@@ -49,45 +41,15 @@ class SwerveModule:
     self.driveClosedLoopController = self.driveMotor.getClosedLoopController()
     self.turnClosedLoopController = self.turnMotor.getClosedLoopController()
 
-    ### Drive and Trun Motor Configurations ###
-    self.kTurningFactor = 2 * math.pi
-
-    self.turnConfig = SparkBaseConfig()
-    self.turnConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20)
-
-    # self.turnEncoderConfig = AbsoluteEncoderConfig()
-    self.turnConfig.absoluteEncoder.inverted(True).positionConversionFactor(self.kTurningFactor).velocityConversionFactor(self.kTurningFactor / 60.0)  # Radians per Second
-    # self.turnConfig.apply(self.turnEncoderConfig)
-
-    # TODO: Calibrate PID Controller
-    # self.turnClosedLoopConfig = ClosedLoopConfig()
-    self.turnConfig.closedLoop.setFeedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder).pid(1, 0, 0).outputRange(-1, 1).positionWrappingEnabled(True).positionWrappingInputRange(0, self.kTurningFactor)
-    # self.turnConfig.apply(self.turnClosedLoopConfig)
-
-    self.driveConfig = SparkBaseConfig()
-    self.drivingFactor = SwerveModuleConstants.kWheelDiameter / SwerveModuleConstants.kDriveMotorReduction
-
-    self.drivingVelocityFeedForward = 0
-
-    self.driveConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(50).inverted(True)
-
-    # self.driveEncoderConfig = EncoderConfig()
-    self.driveConfig.encoder.positionConversionFactor(self.drivingFactor)
-    self.driveConfig.encoder.velocityConversionFactor(self.drivingFactor / 60)
-    # self.driveConfig.apply(self.driveEncoderConfig)
-
-    # self.driveClosedLoopConfig = ClosedLoopConfig()
-    self.driveConfig.closedLoop.setFeedbackSensor(ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder).pid(0.04, 0, 0).velocityFF(self.drivingVelocityFeedForward).outputRange(-1, 1)
-    # self.driveConfig.apply(self.driveClosedLoopConfig)
-
+    ### Apply Motor Controller Configs ###
     self.driveMotor.configure(
-      self.driveConfig,
+      Config.MAXSwerveModule.driveConfig,
       SparkBase.ResetMode.kResetSafeParameters,
       SparkBase.PersistMode.kPersistParameters,
     )
 
     self.turnMotor.configure(
-      self.turnConfig,
+      Config.MAXSwerveModule.turnConfig,
       SparkBase.ResetMode.kResetSafeParameters,
       SparkBase.PersistMode.kPersistParameters,
     )
@@ -118,14 +80,20 @@ class SwerveModule:
     """
     correctDesiredState = SwerveModuleState()
     correctDesiredState.speed = desiredState.speed
-    correctDesiredState.angle = desiredState.angle.__add__(Rotation2d.fromDegrees(radiansToDegrees(self.chassisAngularOffset)))
+    correctDesiredState.angle = desiredState.angle.__add__(
+      Rotation2d.fromDegrees(radiansToDegrees(self.chassisAngularOffset))
+    )
 
     # Optimize the reference state to avoid spinning further than 90 degrees.
     correctDesiredState.optimize(Rotation2d(self.turnEncoder.getPosition()))
 
     # Command driving and turning motors towards their respective setpoints.
-    self.driveClosedLoopController.setReference(correctDesiredState.speed, SparkLowLevel.ControlType.kVelocity)
-    self.turnClosedLoopController.setReference(correctDesiredState.angle.radians(), SparkLowLevel.ControlType.kPosition)
+    self.driveClosedLoopController.setReference(
+      correctDesiredState.speed, SparkLowLevel.ControlType.kVelocity
+    )
+    self.turnClosedLoopController.setReference(
+      correctDesiredState.angle.radians(), SparkLowLevel.ControlType.kPosition
+    )
 
     self.desiredState = desiredState
 
