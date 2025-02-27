@@ -17,7 +17,6 @@ class ControllerConstants:
   kOperatorControllerPort = 1
 
   kDriveDeadband = 0.05
-  kElevateDeadband = 0.05
 
 
 class DriveSubsystemConstants:
@@ -81,20 +80,10 @@ class SwerveModuleConstants:
   kDrivingMotorFreeSpeedRotationsPerSecond = 5676 / 60
   # 45 teeth on bevel gear, 22 on first-stage spur gear, 15 on bevel pinion
   kDriveMotorReduction = (45.0 * 22) / (kDriveMotorPinionTeeth * 15)
-  kWheelFreeSpeedRotationsPerSecond = kDrivingMotorFreeSpeedRotationsPerSecond * kWheelCircumference / kDriveMotorReduction
+  kWheelFreeSpeedRotationsPerSecond = (
+    kDrivingMotorFreeSpeedRotationsPerSecond
+    * kWheelCircumference
+    / kDriveMotorReduction
+  )
 
   kDriveMotorGearRatio = 1 / kDriveMotorReduction
-
-
-class ElevatorSubsystemConstants:
-  kElevatorSpeed = 0.5
-
-  kLeftElevatorMotorId = 20
-  kRightElevatorMotorId = 21
-
-
-class PickupSubsystemConstants:
-  kPickupSpeed = 0.5
-
-  kUpperPickupMotorId = 22
-  kLowerPickupMotorId = 23
