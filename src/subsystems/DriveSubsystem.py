@@ -104,9 +104,7 @@ class DriveSubsystem(Subsystem):
   def setFrontLeft(self):
     self.frontLeft.setDesiredState(SwerveModuleState(1, Rotation2d.fromDegrees(90)))
 
-  def drive(
-    self, xSpeed: float, ySpeed: float, rot: float, fieldRelative: bool
-  ) -> None:
+  def drive(self, xSpeed: float, ySpeed: float, rot: float, fieldRelative: bool) -> None:
     """
     Drives the robot using the specified x, y, and rotation speeds.
 
@@ -122,23 +120,11 @@ class DriveSubsystem(Subsystem):
     rotDelivered = rot * DriveSubsystemConstants.kMaxAngularSpeed
 
     if fieldRelative:
-      swerveModuleStates = (
-        DriveSubsystemConstants.kDriveKinematics.toSwerveModuleStates(
-          ChassisSpeeds.fromFieldRelativeSpeeds(
-            xSpeedDelivered, ySpeedDelivered, rotDelivered, self.gyro.getRotation2d()
-          )
-        )
-      )
+      swerveModuleStates = DriveSubsystemConstants.kDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, self.gyro.getRotation2d()))
     else:
-      swerveModuleStates = (
-        DriveSubsystemConstants.kDriveKinematics.toSwerveModuleStates(
-          ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered)
-        )
-      )
+      swerveModuleStates = DriveSubsystemConstants.kDriveKinematics.toSwerveModuleStates(ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered))
 
-    states = SwerveDrive4Kinematics.desaturateWheelSpeeds(
-      swerveModuleStates, DriveSubsystemConstants.kMaxSpeedMetersPerSecond
-    )
+    states = SwerveDrive4Kinematics.desaturateWheelSpeeds(swerveModuleStates, DriveSubsystemConstants.kMaxSpeedMetersPerSecond)
 
     self.frontLeft.setDesiredState(states[0])
     self.frontRight.setDesiredState(states[1])
