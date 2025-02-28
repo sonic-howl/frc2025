@@ -13,11 +13,11 @@ from subsystems.PickupSubsystem import PickupSubsystem
 class RobotContainer:
   def __init__(self):
     self.driveSubsystem = DriveSubsystem()
-    self.elevatorSubstystem = ElevatorSubsystem()
-    self.pickupSubsystem = PickupSubsystem()
 
     self.driverController = CommandXboxController(DriverControllerConstants.kDriverControllerPort)
-    self.operatorController = CommandXboxController(OperatorControllerConstants.kOperatorControllerPort)
+    self.operatorController = CommandXboxController(
+      OperatorControllerConstants.kOperatorControllerPort
+    )
 
     self.configureButtonBindings()
     self.configureAuto()
@@ -27,9 +27,15 @@ class RobotContainer:
     self.driveSubsystem.setDefaultCommand(
       RunCommand(
         lambda: self.driveSubsystem.drive(
-          wpimath.applyDeadband(self.driverController.getLeftX(), DriverControllerConstants.kDriveDeadband),
-          wpimath.applyDeadband(-self.driverController.getLeftY(), DriverControllerConstants.kDriveDeadband),
-          wpimath.applyDeadband(self.driverController.getRightX(), DriverControllerConstants.kDriveDeadband),
+          wpimath.applyDeadband(
+            -self.driverController.getLeftY(), DriverControllerConstants.kDriveDeadband
+          ),
+          wpimath.applyDeadband(
+            -self.driverController.getLeftX(), DriverControllerConstants.kDriveDeadband
+          ),
+          wpimath.applyDeadband(
+            -self.driverController.getRightX(), DriverControllerConstants.kDriveDeadband
+          ),
           self.fieldRelative,
         ),
         self.driveSubsystem,
@@ -40,7 +46,9 @@ class RobotContainer:
       RunCommand(
         lambda: self.elevatorSubstystem.manualDrive(
           wpimath.applyDeadband(
-            -(self.operatorController.getLeftY()),  # Inverted because "up" on a joystick returns a negative value.
+            -(
+              self.operatorController.getLeftY()
+            ),  # Inverted because "up" on a joystick returns a negative value.
             OperatorControllerConstants.kElevateDeadband,
           )
         )
@@ -54,7 +62,9 @@ class RobotContainer:
     Configures button functions for both the Driver and Operator XBox Controllers.
     """
     ### Driver Controller ###
-    self.driverController.x().whileTrue(cmd.run(lambda: self.driveSubsystem.setX, self.driveSubsystem))
+    self.driverController.x().whileTrue(
+      cmd.run(lambda: self.driveSubsystem.setX, self.driveSubsystem)
+    )
 
     ### Operator Controller ###
     self.operatorController.leftBumper().whileTrue(cmd.run(lambda: self.pickupSubsystem.pull()))
@@ -62,8 +72,13 @@ class RobotContainer:
 
   def configureAuto(self):
     self.autoSelector = wpilib.SendableChooser()
-    self.autoSelector.setDefaultOption("Default Option (test)", cmd.runOnce(lambda: print("Default Autonomous Command")))
-    self.autoSelector.addOption("Test Option", cmd.runOnce(lambda: print("Test Autonomous Command")))
+    self.autoSelector.setDefaultOption(
+      "Default Option (test)",
+      cmd.runOnce(lambda: print("Default Autonomous Command")),
+    )
+    self.autoSelector.addOption(
+      "Test Option", cmd.runOnce(lambda: print("Test Autonomous Command"))
+    )
     SmartDashboard.putData("AutoSelector", self.autoSelector)
 
   def getAutonomousCommand(self) -> Command:
