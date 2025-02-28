@@ -117,11 +117,19 @@ class DriveSubsystem(Subsystem):
     rotDelivered = rot * DriveSubsystemConstants.kMaxAngularSpeed
 
     if fieldRelative:
-      swerveModuleStates = DriveSubsystemConstants.kDriveKinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, self.gyro.getRotation2d()))
+      swerveModuleStates = DriveSubsystemConstants.kDriveKinematics.toSwerveModuleStates(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+          xSpeedDelivered, ySpeedDelivered, rotDelivered, self.gyro.getRotation2d()
+        )
+      )
     else:
-      swerveModuleStates = DriveSubsystemConstants.kDriveKinematics.toSwerveModuleStates(ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered))
+      swerveModuleStates = DriveSubsystemConstants.kDriveKinematics.toSwerveModuleStates(
+        ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered)
+      )
 
-    states = SwerveDrive4Kinematics.desaturateWheelSpeeds(swerveModuleStates, DriveSubsystemConstants.kMaxSpeedMetersPerSecond)
+    states = SwerveDrive4Kinematics.desaturateWheelSpeeds(
+      swerveModuleStates, DriveSubsystemConstants.kMaxSpeedMetersPerSecond
+    )
 
     self.frontLeft.setDesiredState(states[0])
     self.frontRight.setDesiredState(states[1])

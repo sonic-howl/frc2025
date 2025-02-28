@@ -61,7 +61,7 @@ exclude = [
     "venv",
 ]
 
-line-length = 320
+line-length = 100
 indent-width = 2
 show-fixes = true
 

@@ -22,7 +22,6 @@ class SwerveModule:
     :param driveMotorId
     :param turnMotorId
     :param chassisAngularOffset: The angle of the module relative to the chassis (radians).
-    :param invertTurnEncoder:   Inverts the turning encoder.
     """
     self.chassisAngularOffset = chassisAngularOffset
     self.desiredState = SwerveModuleState(0.0, Rotation2d())
