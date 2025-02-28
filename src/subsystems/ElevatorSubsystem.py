@@ -12,7 +12,9 @@ class ElevatorSubsystem(Subsystem):
   def __init__(self):
     super().__init__()
 
-    self.leftElevatorMotor = SparkMax(ElevatorSubsystemConstants.kLeftElevatorMotorId, SparkMax.MotorType.kBrushless)
+    self.leftElevatorMotor = SparkMax(
+      ElevatorSubsystemConstants.kLeftElevatorMotorId, SparkMax.MotorType.kBrushless
+    )
     self.rightElevatorMotor = SparkMax(
       ElevatorSubsystemConstants.kRightElevatorMotorId,
       SparkMax.MotorType.kBrushless,
