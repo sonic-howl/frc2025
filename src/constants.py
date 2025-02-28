@@ -1,6 +1,6 @@
 import math
 
-from wpimath import trajectory, units
+from wpimath import units
 from wpimath.geometry import Translation2d
 from wpimath.kinematics import SwerveDrive4Kinematics
 
@@ -12,11 +12,15 @@ class RobotConstants:
   kWheelCenterOffset = units.inchesToMeters(1.5)
 
 
-class ControllerConstants:
+class DriverControllerConstants:
   kDriverControllerPort = 0
-  kOperatorControllerPort = 1
 
   kDriveDeadband = 0.05
+
+
+class OperatorControllerConstants:
+  kOperatorControllerPort = 1
+
   kElevateDeadband = 0.05
 
 
@@ -43,7 +47,7 @@ class DriveSubsystemConstants:
       (-RobotConstants.kFrameLength / 2) - RobotConstants.kWheelCenterOffset,
     ),
   )
-  ### Motor Ids ### (Turning: Even, Drive: Odd) [Ids: 10-19 (18,19 are extra)]
+  ### Motor Ids ### (Turning: Even, Drive: Odd) [Ids: 9-19 (17, 18, 19 are extra)]
   # Temporarily changed to ROBOT POV
   # Should be undone, and updated in config.py for more consistency
   kFrontLeftTurningMotorId = 10
@@ -87,7 +91,7 @@ class SwerveModuleConstants:
 
 
 class ElevatorSubsystemConstants:
-  kElevatorSpeed = 0.5
+  kManualElevatorSpeed = 0.5
 
   kLeftElevatorMotorId = 20
   kRightElevatorMotorId = 21
