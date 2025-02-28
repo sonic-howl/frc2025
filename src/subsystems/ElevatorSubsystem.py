@@ -1,8 +1,10 @@
 from commands2 import Subsystem
 from rev import (
   SparkBase,
+  SparkClosedLoopController,
   SparkMax,
 )
+from wpimath.controller import ElevatorFeedforward
 
 from config import Config
 from constants import ElevatorSubsystemConstants
@@ -12,33 +14,37 @@ class ElevatorSubsystem(Subsystem):
   def __init__(self):
     super().__init__()
 
-    self.leftElevatorMotor = SparkMax(
+    leftElevatorMotor = SparkMax(
       ElevatorSubsystemConstants.kLeftElevatorMotorId, SparkMax.MotorType.kBrushless
     )
-    self.rightElevatorMotor = SparkMax(
+    rightElevatorMotor = SparkMax(
       ElevatorSubsystemConstants.kRightElevatorMotorId,
       SparkMax.MotorType.kBrushless,
     )
 
-    ### Encoders ###
-    self.leftElevatorEncoder = self.leftElevatorMotor.getEncoder()
-    self.rightElevatorEncoder = self.rightElevatorMotor.getEncoder()
-
-    ### Closed Loop Controllers ###
-    self.leftElevatorClosedLoopController = self.leftElevatorMotor.getClosedLoopController()
-    self.rightElevatorClosedLoopController = self.rightElevatorMotor.getClosedLoopController()
-
     ### Apply Configs ###
-    self.leftElevatorMotor.configure(
+    leftElevatorMotor.configure(
       Config.ElevatorSubsystem.leftMotorConfig,
       SparkBase.ResetMode.kResetSafeParameters,
       SparkBase.PersistMode.kPersistParameters,
     )
-    self.rightElevatorMotor.configure(
+    rightElevatorMotor.configure(
       Config.ElevatorSubsystem.rightMotorConfig,
       SparkBase.ResetMode.kResetSafeParameters,
       SparkBase.PersistMode.kPersistParameters,
     )
+
+    self.elevatorMotor = leftElevatorMotor
+
+    ### Encoders ###
+    self.elevatorEncoder = self.elevatorMotor.getEncoder()
+
+    ### Closed Loop Controllers ###
+    self.elevatorClosedLoopController = self.elevatorMotor.getClosedLoopController()
+
+    ### Elevator Feed Forward ###
+    # https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html
+    self.feedForward = ElevatorFeedforward(0, 0, 0, 0)
 
   def manualDrive(self, speed: int):
     """
@@ -47,9 +53,19 @@ class ElevatorSubsystem(Subsystem):
     ::param speed: User input speed from controller. (-1 to 1)"""
     deliveredSpeed = speed * ElevatorSubsystemConstants.kManualElevatorSpeed
 
-    self.leftElevatorMotor.set(deliveredSpeed)
-    self.rightElevatorMotor.set(deliveredSpeed)
+    self.elevatorMotor.set(deliveredSpeed)
+
+  def goToPosition(self, position: float):
+    """
+    Raises or Lowers the elevator to the provided posistion.
+
+    ::param position: Desired Position"""
+    self.elevatorClosedLoopController.setReference(
+      position,
+      SparkMax.ControlType.kMAXMotionPositionControl,
+      arbFeedforward=self.feedForward,
+      arbFFUnits=SparkClosedLoopController.ArbFFUnits.kVoltage,
+    )
 
   def stop(self):
-    self.leftElevatorMotor.set(0)
-    self.rightElevatorMotor.set(0)
+    self.elevatorMotor.set(0)

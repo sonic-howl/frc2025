@@ -13,6 +13,8 @@ from subsystems.PickupSubsystem import PickupSubsystem
 class RobotContainer:
   def __init__(self):
     self.driveSubsystem = DriveSubsystem()
+    self.elevatorSubsystem = ElevatorSubsystem()
+    self.pickupSubsystem = PickupSubsystem()
 
     self.driverController = CommandXboxController(DriverControllerConstants.kDriverControllerPort)
     self.operatorController = CommandXboxController(
@@ -42,20 +44,31 @@ class RobotContainer:
       )
     )
 
-    self.elevatorSubstystem.setDefaultCommand(
-      RunCommand(
-        lambda: self.elevatorSubstystem.manualDrive(
-          wpimath.applyDeadband(
-            -(
-              self.operatorController.getLeftY()
-            ),  # Inverted because "up" on a joystick returns a negative value.
-            OperatorControllerConstants.kElevateDeadband,
-          )
-        )
-      )
-    )
+    # self.elevatorSubsystem.setDefaultCommand(
+    #   RunCommand(
+    #     lambda: self.elevatorSubsystem.manualDrive(
+    #       wpimath.applyDeadband(
+    #         -(
+    #           self.operatorController.getLeftY()
+    #         ),  # Inverted because "up" on a joystick returns a negative value.
+    #         OperatorControllerConstants.kElevateDeadband,
+    #       )
+    #     )
+    #   )
+    # )
+    self.elevatorSubsystem.setDefaultCommand(RunCommand(lambda: self.elevatorSubsystem.stop()))
 
     self.pickupSubsystem.setDefaultCommand(RunCommand(lambda: self.pickupSubsystem.stop()))
+
+  def teleopPeriodic(self):
+    y = wpimath.applyDeadband(
+      self.operatorController.getLeftY(), OperatorControllerConstants.kElevateDeadband
+    )
+    if abs(y) > 0:
+      elevatorCurrentCommand = self.elevatorSubsystem.getCurrentCommand()
+      if elevatorCurrentCommand is not None:
+        elevatorCurrentCommand.cancel()
+      self.elevatorSubsystem.manualDrive(-y)
 
   def configureButtonBindings(self):
     """
@@ -67,8 +80,8 @@ class RobotContainer:
     )
 
     ### Operator Controller ###
-    self.operatorController.leftBumper().whileTrue(cmd.run(lambda: self.pickupSubsystem.pull()))
-    self.operatorController.rightBumper().whileTrue(cmd.run(lambda: self.pickupSubsystem.push()))
+    self.operatorController.leftBumper().whileTrue(RunCommand(lambda: self.pickupSubsystem.pull()))
+    self.operatorController.rightBumper().whileTrue(RunCommand(lambda: self.pickupSubsystem.push()))
 
   def configureAuto(self):
     self.autoSelector = wpilib.SendableChooser()

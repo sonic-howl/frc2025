@@ -1,6 +1,6 @@
 import math
 
-from rev import ClosedLoopConfig, SparkBaseConfig
+from rev import ClosedLoopConfig, SparkBaseConfig, SparkMaxConfig
 
 from constants import ElevatorSubsystemConstants, SwerveModuleConstants
 
@@ -45,42 +45,30 @@ class Config:
     # )
 
     ### Left Motor Config ##
-    leftMotorVelocityFeedForward = 0
+    MotorVelocityFeedForward = 0
 
-    leftMotorConfig = SparkBaseConfig()
+    leftMotorConfig = SparkMaxConfig()
 
-    leftMotorConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(50).inverted(
-      True
-    )
+    leftMotorConfig.setIdleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(50).inverted(True)
 
-    # leftMotorConfig.encoder.positionConversionFactor(
-    #   driveFactor
-    # ).velocityConversionFactor(driveFactor / 60)
+    leftMotorConfig.softLimit.forwardSoftLimit(
+      ElevatorSubsystemConstants.kMotorForwardSoftLimit
+    ).reverseSoftLimit(0).forwardSoftLimitEnabled(True).reverseSoftLimitEnabled(True)
 
     leftMotorConfig.closedLoop.setFeedbackSensor(
       ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
     ).pid(
       ElevatorSubsystemConstants.kP, ElevatorSubsystemConstants.kI, ElevatorSubsystemConstants.kD
-    ).velocityFF(leftMotorVelocityFeedForward).outputRange(-1, 1)
+    ).velocityFF(ElevatorSubsystemConstants.kMotorVelocityFeedForward).outputRange(-1, 1)
+    leftMotorConfig.closedLoop.maxMotion.maxVelocity(
+      ElevatorSubsystemConstants.kMotorMaxVelocity
+    ).maxAcceleration(ElevatorSubsystemConstants.kMotorAcceleration)
 
     ### Right Motor Config ###
-    rightMotorVelocityFeedForward = 0
 
-    rightMotorConfig = SparkBaseConfig()
+    rightMotorConfig = SparkMaxConfig()
 
-    rightMotorConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(50).inverted(
-      True
-    )
-
-    # rightMotorConfig.encoder.positionConversionFactor(
-    #   driveFactor
-    # ).velocityConversionFactor(driveFactor / 60)
-
-    rightMotorConfig.closedLoop.setFeedbackSensor(
-      ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
-    ).pid(
-      ElevatorSubsystemConstants.kP, ElevatorSubsystemConstants.kI, ElevatorSubsystemConstants.kD
-    ).velocityFF(rightMotorConfig).outputRange(-1, 1)
+    rightMotorConfig.follow(ElevatorSubsystemConstants.kLeftElevatorMotorId, True)
 
   class PickupSubsystem:
     ### Lower Motor Config ###

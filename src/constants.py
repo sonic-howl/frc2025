@@ -101,6 +101,14 @@ class ElevatorSubsystemConstants:
   kD = 0
   kClosedLoopSlot = 0
 
+  kMotorPositionFeedForward = 0
+  kMotorVelocityFeedForward = 0
+
+  kMotorForwardSoftLimit = 1000
+
+  kMotorMaxVelocity = 3000
+  kMotorAcceleration = 1000
+
   kLeftElevatorMotorId = 20
   kRightElevatorMotorId = 21
 
