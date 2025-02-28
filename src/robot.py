@@ -3,6 +3,7 @@ import typing
 import wpilib
 import wpilib.drive
 from commands2 import Command, CommandScheduler, TimedCommandRobot
+from wpilib import SmartDashboard
 
 from robotcontainer import RobotContainer
 from shuffleboard import addDeployArtifacts
