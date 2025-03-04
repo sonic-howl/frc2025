@@ -1,14 +1,16 @@
 import navx
 from commands2 import Subsystem
+from ntcore import NetworkTableInstance
 from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.config import RobotConfig
 from pathplannerlib.controller import PPHolonomicDriveController
+from vision import LimelightHelpers
 from wpilib import DriverStation
+from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.kinematics import (
   ChassisSpeeds,
   SwerveDrive4Kinematics,
-  SwerveDrive4Odometry,
   SwerveModuleState,
 )
 
@@ -46,7 +48,7 @@ class DriveSubsystem(Subsystem):
 
     self.gyro = navx.AHRS(navx.AHRS.NavXComType.kMXP_SPI)
 
-    self.odometry = SwerveDrive4Odometry(
+    self.odometry = SwerveDrive4PoseEstimator(
       DriveSubsystemConstants.kDriveKinematics,
       self.gyro.getRotation2d(),
       (
@@ -74,6 +76,8 @@ class DriveSubsystem(Subsystem):
       self,
     )
 
+    self.limelightHelpers = LimelightHelpers()
+
   def periodic(self) -> None:
     self.odometry.update(
       self.gyro.getRotation2d(),
@@ -84,6 +88,14 @@ class DriveSubsystem(Subsystem):
         self.backRight.getPosition(),
       ),
     )
+
+    # get limelight megapose
+    (pose, timestamp) = self.limelightHelpers.getLLPose()
+    """
+    https://github.com/LimelightVision/limelight-examples/blob/28cb4c8f9b68cea62bef010ab793960f8d2b7a53/java-wpilib/swerve-megatag-odometry/src/main/java/frc/robot/Drivetrain.java#L142
+    """
+    self.odometry.setVisionMeasurementStdDevs([0.7, 0.7, 9999999])
+    self.odometry.addVisionMeasurement(pose, timestamp)
 
   def getPose(self) -> Pose2d:
     """
