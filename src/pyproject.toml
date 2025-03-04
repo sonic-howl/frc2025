@@ -16,13 +16,14 @@ robotpy_extras = [
     "commands2",
     # "cscore",
     "navx",
-    # "pathplannerlib",
+    "pathplannerlib",
     # "phoenix6",
     "rev",
     # "romi",
     # "sim",
     # "xrp",
 ]
+
 
 # Other pip packages to install. Visit this link for all available packages: https://wpilib.jfrog.io/ui/native/wpilib-python-release-2025/
 requires = []

@@ -1,5 +1,6 @@
 import math
 
+from pathplannerlib.config import PIDConstants
 from rev import ClosedLoopConfig, SparkBaseConfig, SparkMaxConfig
 
 from constants import ElevatorSubsystemConstants, SwerveModuleConstants
@@ -80,3 +81,7 @@ class Config:
 
     ### Upper Motor Config ###
     upperMotorConfig = SparkBaseConfig().inverted(True)
+
+  class DriveSubsystem:
+    translationPPHolonominicDrivePID = PIDConstants(5.0, 0.0, 0.0)
+    rotationPPHolonominicDrivePID = PIDConstants(5.0, 0.0, 0.0)
