@@ -35,17 +35,23 @@ class PickupSubsystem(Subsystem):
       SparkBase.PersistMode.kPersistParameters,
     )
 
-  def manualDrive(self, speed: float):
+  def pull(self):
     """
-    Drives the intake to pull or push based on user input.
-
-    ::param speed: User input speed. (-1 - 1)
+    Drives the intake at a constant speed, in order to pull the game piece into the bot.
     """
-    deliveredSpeed = speed * PickupSubsystemConstants.kManualPickupSpeed
+    self.upperPickupMotor.set(PickupSubsystemConstants.kPickupSpeed)
+    self.lowerPickupMotor.set(PickupSubsystemConstants.kPickupSpeed)
 
-    self.upperPickupMotor.set(deliveredSpeed)
-    self.lowerPickupMotor.set(deliveredSpeed)
+  def push(self):
+    """
+    Drives the intake at a constant speed, in order to pushes the game piece into the bot.
+    """
+    self.upperPickupMotor.set(-PickupSubsystemConstants.kPickupSpeed)
+    self.lowerPickupMotor.set(-PickupSubsystemConstants.kPickupSpeed)
 
   def stop(self):
     self.upperPickupMotor.set(0)
     self.lowerPickupMotor.set(0)
+
+  def release(self):
+    pass

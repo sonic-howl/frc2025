@@ -44,21 +44,29 @@ class RobotContainer:
       )
     )
 
+    self.elevatorSubsystem.setDefaultCommand(
+      RunCommand(
+        lambda: self.elevatorSubsystem.manualDrive(
+          wpimath.applyDeadband(
+            -(
+              self.operatorController.getLeftY()
+            ),  # Inverted because "up" on a joystick returns a negative value.
+            OperatorControllerConstants.kElevateDeadband,
+          )
+        ),
+        self.elevatorSubsystem,
+      )
+    )
     # self.elevatorSubsystem.setDefaultCommand(
-    #   RunCommand(
-    #     lambda: self.elevatorSubsystem.manualDrive(
-    #       wpimath.applyDeadband(
-    #         -(
-    #           self.operatorController.getLeftY()
-    #         ),  # Inverted because "up" on a joystick returns a negative value.
-    #         OperatorControllerConstants.kElevateDeadband,
-    #       )
-    #     )
-    #   )
+    #   RunCommand(lambda: self.elevatorSubsystem.stop(), self.elevatorSubsystem)
     # )
-    self.elevatorSubsystem.setDefaultCommand(RunCommand(lambda: self.elevatorSubsystem.stop()))
 
-    self.pickupSubsystem.setDefaultCommand(RunCommand(lambda: self.pickupSubsystem.stop()))
+    self.elevatorSubsystem.setDefaultCommand(
+      RunCommand(lambda: self.elevatorSubsystem.stop(), self.elevatorSubsystem)
+    )
+    self.pickupSubsystem.setDefaultCommand(
+      RunCommand(lambda: self.pickupSubsystem.stop(), self.pickupSubsystem)
+    )
 
   def teleopPeriodic(self):
     ### Manual Elevator Commands ###
@@ -70,10 +78,14 @@ class RobotContainer:
       if elevatorCurrentCommand is not None:
         elevatorCurrentCommand.cancel()
       self.elevatorSubsystem.manualDrive(-y)
-    
+
     ### Manual Pickup Commands ###
-    leftTriggerAxis = wpimath.applyDeadband(self.operatorController.getLeftTriggerAxis, OperatorControllerConstants.kPickupDeadband)
-    rightTriggerAxis = wpimath.applyDeadband(self.operatorController.getRightTriggerAxis, OperatorControllerConstants.kPickupDeadband)
+    leftTriggerAxis = wpimath.applyDeadband(
+      self.operatorController.getLeftTriggerAxis, OperatorControllerConstants.kPickupDeadband
+    )
+    rightTriggerAxis = wpimath.applyDeadband(
+      self.operatorController.getRightTriggerAxis, OperatorControllerConstants.kPickupDeadband
+    )
 
     pickupCurrentCommand = self.pickupSubsystem.getCurrentCommand()
     if pickupCurrentCommand is not None:
@@ -83,10 +95,6 @@ class RobotContainer:
       self.pickupSubsystem.manualDrive(leftTriggerAxis)
     elif rightTriggerAxis > 0:
       self.pickupSubsystem.manualDrive(-rightTriggerAxis)
-      
-      
-      
-      
 
   def configureButtonBindings(self):
     """
@@ -98,9 +106,9 @@ class RobotContainer:
     )
 
     ### Operator Controller ###
-    self.operatorController.getLeftTriggerAxis
     self.operatorController.leftBumper().whileTrue(RunCommand(lambda: self.pickupSubsystem.pull()))
     self.operatorController.rightBumper().whileTrue(RunCommand(lambda: self.pickupSubsystem.push()))
+    self.operatorController.y().onTrue(RunCommand(lambda: self.elevatorSubsystem.zeroPosition()))
 
   def configureAuto(self):
     self.autoSelector = wpilib.SendableChooser()

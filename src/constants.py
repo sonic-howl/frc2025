@@ -23,7 +23,6 @@ class OperatorControllerConstants:
   kOperatorControllerPort = 1
 
   kElevateDeadband = 0.05
-  kPickupDeadband = 0.05
 
 
 class DriveSubsystemConstants:
@@ -95,7 +94,7 @@ class SwerveModuleConstants:
 
 
 class ElevatorSubsystemConstants:
-  kManualElevatorSpeed = 0.5
+  kManualElevatorSpeed = 0.25
 
   kP = 0
   kI = 0
@@ -105,7 +104,8 @@ class ElevatorSubsystemConstants:
   kMotorPositionFeedForward = 0
   kMotorVelocityFeedForward = 0
 
-  kMotorForwardSoftLimit = 1000
+  kMotorForwardSoftLimit = 0
+  kMotorReverseSoftLimit = 1000
 
   kMotorMaxVelocity = 3000
   kMotorAcceleration = 1000
@@ -115,7 +115,7 @@ class ElevatorSubsystemConstants:
 
 
 class PickupSubsystemConstants:
-  kManualPickupSpeed = 1
+  kPickupSpeed = 0.5
 
   kUpperPickupMotorId = 22
   kLowerPickupMotorId = 23

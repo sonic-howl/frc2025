@@ -4,6 +4,7 @@ from rev import (
   SparkClosedLoopController,
   SparkMax,
 )
+from wpilib import DigitalInput
 from wpimath.controller import ElevatorFeedforward
 
 from config import Config
@@ -13,6 +14,8 @@ from constants import ElevatorSubsystemConstants
 class ElevatorSubsystem(Subsystem):
   def __init__(self):
     super().__init__()
+
+    # DigitalInput()
 
     leftElevatorMotor = SparkMax(
       ElevatorSubsystemConstants.kLeftElevatorMotorId, SparkMax.MotorType.kBrushless
@@ -46,7 +49,13 @@ class ElevatorSubsystem(Subsystem):
     # https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html
     self.feedForward = ElevatorFeedforward(0, 0, 0, 0)
 
-  def manualDrive(self, speed: int):
+  def periodic(self):
+    pass
+
+  def zeroPosition(self):
+    self.elevatorEncoder.setPosition(0)
+
+  def manualDrive(self, speed: float):
     """
     Raises or Lowers the elevator at the speed determined by manua user input.
 
@@ -63,7 +72,7 @@ class ElevatorSubsystem(Subsystem):
     self.elevatorClosedLoopController.setReference(
       position,
       SparkMax.ControlType.kMAXMotionPositionControl,
-      arbFeedforward=self.feedForward,
+      arbFeedforward=self.feedForward.calculate(self.elevatorEncoder.getVelocity()),
       arbFFUnits=SparkClosedLoopController.ArbFFUnits.kVoltage,
     )
 

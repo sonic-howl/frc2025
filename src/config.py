@@ -51,9 +51,11 @@ class Config:
 
     leftMotorConfig.setIdleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(50).inverted(True)
 
-    leftMotorConfig.softLimit.forwardSoftLimit(
-      ElevatorSubsystemConstants.kMotorForwardSoftLimit
-    ).reverseSoftLimit(0).forwardSoftLimitEnabled(True).reverseSoftLimitEnabled(True)
+    # leftMotorConfig.softLimit.forwardSoftLimit(
+    #   ElevatorSubsystemConstants.kMotorForwardSoftLimit
+    # ).reverseSoftLimit(ElevatorSubsystemConstants.kMotorReverseSoftLimit).forwardSoftLimitEnabled(
+    #   True
+    # ).reverseSoftLimitEnabled(True)
 
     leftMotorConfig.closedLoop.setFeedbackSensor(
       ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
@@ -68,11 +70,13 @@ class Config:
 
     rightMotorConfig = SparkMaxConfig()
 
-    rightMotorConfig.follow(ElevatorSubsystemConstants.kLeftElevatorMotorId, True)
+    rightMotorConfig.setIdleMode(SparkMaxConfig.IdleMode.kBrake).follow(
+      ElevatorSubsystemConstants.kLeftElevatorMotorId, True
+    )
 
   class PickupSubsystem:
     ### Lower Motor Config ###
     lowerMotorConfig = SparkBaseConfig()
 
     ### Upper Motor Config ###
-    upperMotorConfig = SparkBaseConfig()
+    upperMotorConfig = SparkBaseConfig().inverted(True)
