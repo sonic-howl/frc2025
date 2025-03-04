@@ -4,7 +4,7 @@ from commands2 import Command, RunCommand, cmd
 from commands2.button import CommandXboxController
 from wpilib import SmartDashboard
 
-from constants import DriverControllerConstants, OperatorControllerConstants
+from constants import DriverControllerConstants, OperatorControllerConstants, ElevatorSubsystemConstants
 from subsystems.DriveSubsystem import DriveSubsystem
 from subsystems.ElevatorSubsystem import ElevatorSubsystem
 from subsystems.PickupSubsystem import PickupSubsystem
@@ -106,9 +106,11 @@ class RobotContainer:
     )
 
     ### Operator Controller ###
-    self.operatorController.leftBumper().whileTrue(RunCommand(lambda: self.pickupSubsystem.pull()))
-    self.operatorController.rightBumper().whileTrue(RunCommand(lambda: self.pickupSubsystem.push()))
     self.operatorController.y().onTrue(RunCommand(lambda: self.elevatorSubsystem.zeroPosition()))
+
+    self.operatorController.povUp().onTrue(cmd.runOnce(lambda: self.elevatorSubsystem.goToPosition(ElevatorSubsystemConstants.kMiddleSetPoint), self.elevatorSubsystem))
+    self.operatorController.povRight().onTrue(cmd.runOnce(lambda: self.elevatorSubsystem.goToPosition(ElevatorSubsystemConstants.kBottomSetPoint), self.elevatorSubsystem))
+    self.operatorController.povDown().onTrue(cmd.runOnce(lambda: self.elevatorSubsystem.goToPosition(ElevatorSubsystemConstants.kScoreSetPoint), self.elevatorSubsystem))
 
   def configureAuto(self):
     self.autoSelector = wpilib.SendableChooser()

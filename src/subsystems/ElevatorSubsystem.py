@@ -1,6 +1,6 @@
 from commands2 import Subsystem
 from rev import (
-  SparkBase,
+  SparkBase,  
   SparkClosedLoopController,
   SparkMax,
 )
