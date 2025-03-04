@@ -5,7 +5,7 @@ from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.config import RobotConfig
 from pathplannerlib.controller import PPHolonomicDriveController
 from vision import LimelightHelpers
-from wpilib import DriverStation
+from wpilib import DriverStation, SmartDashboard
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.kinematics import (
@@ -96,6 +96,14 @@ class DriveSubsystem(Subsystem):
     """
     self.odometry.setVisionMeasurementStdDevs([0.7, 0.7, 9999999])
     self.odometry.addVisionMeasurement(pose, timestamp)
+
+    self.updateShuffleBoard()
+
+  def updateShuffleBoard(self):
+    SmartDashboard.putNumber("Front Left Rotation", self.frontLeft.getPosition().angle.degrees())
+    SmartDashboard.putNumber("Front Right Rotation", self.frontRight.getPosition().angle.degrees())
+    SmartDashboard.putNumber("Back Left Rotation", self.backLeft.getPosition().angle.degrees())
+    SmartDashboard.putNumber("Back Right Rotation", self.backRight.getPosition().angle.degrees())
 
   def getPose(self) -> Pose2d:
     """

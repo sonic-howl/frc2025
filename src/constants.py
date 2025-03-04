@@ -23,6 +23,7 @@ class OperatorControllerConstants:
   kOperatorControllerPort = 1
 
   kElevateDeadband = 0.05
+  kPickupDeadband = 0.05
 
 
 class DriveSubsystemConstants:
@@ -113,9 +114,17 @@ class ElevatorSubsystemConstants:
   kLeftElevatorMotorId = 20
   kRightElevatorMotorId = 21
 
+  kUpperSwitchChannel = 0
+  kLowerSwitchChannel = 1
+
+  kMiddleSetPoint = 10
+  kBottomSetPoint = 5
+  kScoreSetPoint = 3
+
+
 
 class PickupSubsystemConstants:
-  kPickupSpeed = 0.5
+  kManualPickupSpeed = 0.5
 
   kUpperPickupMotorId = 22
   kLowerPickupMotorId = 23

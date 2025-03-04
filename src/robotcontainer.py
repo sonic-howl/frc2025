@@ -6,7 +6,11 @@ from pathplannerlib.auto import AutoBuilder, NamedCommands
 from pathplannerlib.events import EventTrigger
 from wpilib import SmartDashboard
 
-from constants import DriverControllerConstants, OperatorControllerConstants
+from constants import (
+  DriverControllerConstants,
+  OperatorControllerConstants,
+  ElevatorSubsystemConstants,
+)
 from subsystems.DriveSubsystem import DriveSubsystem
 from subsystems.ElevatorSubsystem import ElevatorSubsystem
 from subsystems.PickupSubsystem import PickupSubsystem
@@ -45,23 +49,6 @@ class RobotContainer:
         self.driveSubsystem,
       )
     )
-
-    self.elevatorSubsystem.setDefaultCommand(
-      RunCommand(
-        lambda: self.elevatorSubsystem.manualDrive(
-          wpimath.applyDeadband(
-            -(
-              self.operatorController.getLeftY()
-            ),  # Inverted because "up" on a joystick returns a negative value.
-            OperatorControllerConstants.kElevateDeadband,
-          )
-        ),
-        self.elevatorSubsystem,
-      )
-    )
-    # self.elevatorSubsystem.setDefaultCommand(
-    #   RunCommand(lambda: self.elevatorSubsystem.stop(), self.elevatorSubsystem)
-    # )
 
     self.elevatorSubsystem.setDefaultCommand(
       RunCommand(lambda: self.elevatorSubsystem.stop(), self.elevatorSubsystem)
@@ -108,9 +95,26 @@ class RobotContainer:
     )
 
     ### Operator Controller ###
-    self.operatorController.leftBumper().whileTrue(RunCommand(lambda: self.pickupSubsystem.pull()))
-    self.operatorController.rightBumper().whileTrue(RunCommand(lambda: self.pickupSubsystem.push()))
     self.operatorController.y().onTrue(RunCommand(lambda: self.elevatorSubsystem.zeroPosition()))
+
+    self.operatorController.povUp().onTrue(
+      cmd.runOnce(
+        lambda: self.elevatorSubsystem.goToPosition(ElevatorSubsystemConstants.kMiddleSetPoint),
+        self.elevatorSubsystem,
+      )
+    )
+    self.operatorController.povRight().onTrue(
+      cmd.runOnce(
+        lambda: self.elevatorSubsystem.goToPosition(ElevatorSubsystemConstants.kBottomSetPoint),
+        self.elevatorSubsystem,
+      )
+    )
+    self.operatorController.povDown().onTrue(
+      cmd.runOnce(
+        lambda: self.elevatorSubsystem.goToPosition(ElevatorSubsystemConstants.kScoreSetPoint),
+        self.elevatorSubsystem,
+      )
+    )
 
   def configureAuto(self):
     self.configureNamedCommands()
