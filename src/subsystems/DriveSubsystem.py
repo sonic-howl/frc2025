@@ -4,7 +4,6 @@ from ntcore import NetworkTableInstance
 from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.config import RobotConfig
 from pathplannerlib.controller import PPHolonomicDriveController
-from vision import LimelightHelpers
 from wpilib import DriverStation, SmartDashboard
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Rotation2d
@@ -17,6 +16,8 @@ from wpimath.kinematics import (
 from config import Config
 from constants import DriveSubsystemConstants, RobotConstants
 from subsystems.SwerveModule import SwerveModule
+
+from .vision import LimelightHelpers
 
 
 class DriveSubsystem(Subsystem):
@@ -57,6 +58,7 @@ class DriveSubsystem(Subsystem):
         self.backLeft.getPosition(),
         self.backRight.getPosition(),
       ),
+      Pose2d(),
     )
 
     # Configure the AutoBuilder last

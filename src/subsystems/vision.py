@@ -6,7 +6,7 @@ from wpimath.geometry import Pose2d, Rotation2d, Translation2d
 
 class LimelightHelpers:
   def __init__(self):
-    self.ll: NetworkTable = NetworkTableInstance.getTable("limelight")
+    self.ll: NetworkTable = NetworkTableInstance.getDefault().getTable("limelight")
     self.poseTopic = self.ll.getDoubleArrayTopic("botpose_orb_wpiblue")
 
   @staticmethod
