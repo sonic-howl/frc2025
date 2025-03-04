@@ -113,7 +113,7 @@ class DriveSubsystem(Subsystem):
     """
     Returns the current pose of the robot.
     """
-    return self.odometry.getPose()
+    return self.odometry.getEstimatedPosition()
 
   def resetOdometry(self, pose: Pose2d) -> None:
     """
