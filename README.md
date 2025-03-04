@@ -20,6 +20,7 @@
     - [Running Robot Dashboards during a Simulation](#running-robot-dashboards-during-a-simulation)
     - [Run Tests](#run-tests)
   - [Getting started](#getting-started)
+    - [Installing Wpilib and Other Tools](#installing-wpilib-and-other-tools)
     - [Installing FRC Game Tools](#installing-frc-game-tools)
     - [Installing WPILib 2025 (Python)](#installing-wpilib-2025-python)
       - [Installing Python](#installing-python)
@@ -28,6 +29,8 @@
     - [Cloning the GitHub Repository](#cloning-the-github-repository)
     - [Installing RobotPy and Dependencies](#installing-robotpy-and-dependencies)
     - [**Optional:** Creating an Alias](#optional-creating-an-alias)
+    - [Setting up PathPlanner](#setting-up-pathplanner)
+      - [Deleting old Auto Deployments](#deleting-old-auto-deployments)
     - [Installing OpenCV](#installing-opencv)
     - [Installing Formatter and Linter](#installing-formatter-and-linter)
   - [Configuring Hardware](#configuring-hardware)
@@ -207,6 +210,12 @@ python3 -m robot.py test
 
 ## Getting started
 
+### Installing Wpilib and Other Tools
+
+Follow [this guide](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html#wpilib-installation-guide).
+
+> Make sure to select `Tools Only` as we install the software related dependencies in [this section](#installing-robotpy-and-dependencies).
+
 ### Installing FRC Game Tools
 
 To install FRC's game tools for 2025, follow [this guide](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/frc-game-tools.html).
@@ -349,6 +358,16 @@ Through the season we're going to be typing `py -3 -m` A LOT. In order to simpli
 Here's an example of how you'd use the command before and after adding the alias:
 - Before: `py -3 -m pip install robotpy`
 - After: `pym pip install robotpy`
+
+### Setting up PathPlanner
+
+Use this command to install PathPlanner: `pym pip install robotpy-pathplannerlib`
+
+> [!Warning] If using a RoboRIO 1, you must disable the NI webserver via `pym robotpy installer niweb disable` in order to ensure there is enough available memory (while connected to the rio). If you need to re-image your rio, you will need to re-enable the webserver.
+
+#### Deleting old Auto Deployments
+
+Use the following command to ssh into the Roborio and remove the old `deploy/` folder: `ssh lvuser@roboRIO-3985-frc.local echo $(pwd) > pwd.txt` 
 
 ### Installing OpenCV
 

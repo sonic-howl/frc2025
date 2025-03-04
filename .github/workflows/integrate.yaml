@@ -39,7 +39,7 @@ jobs:
       - name: Sync robotpy
         working-directory: ./src
         run: |
-          python3 -m robotpy sync
+          python3 -m robotpy sync --no-upgrade-project
       - name: Install dependencies
         run: |
           python3 -m pip install ruff

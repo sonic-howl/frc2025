@@ -1,2 +1,8 @@
 .vscode/
 __pycache__/
+# SIM & Network table configuration
+src/simgui-ds.json
+src/simgui-window.json
+src/simgui.json
+src/networktables.json
+ctre_sim/
