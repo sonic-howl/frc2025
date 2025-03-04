@@ -21,6 +21,8 @@ from .vision import LimelightHelpers
 
 
 class DriveSubsystem(Subsystem):
+  fieldRelative = True
+
   def __init__(self):
     super().__init__()
 
@@ -231,3 +233,6 @@ class DriveSubsystem(Subsystem):
     # This will flip the path being followed to the red side of the field.
     # THE ORIGIN WILL REMAIN ON THE BLUE SIDE
     return DriverStation.getAlliance() == DriverStation.Alliance.kRed
+
+  def toggleFieldRelative(self):
+    DriveSubsystem.fieldRelative = not DriveSubsystem.fieldRelative

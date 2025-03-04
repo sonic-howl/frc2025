@@ -30,8 +30,6 @@ class RobotContainer:
     self.configureButtonBindings()
     self.configureAuto()
 
-    self.fieldRelative = False
-
     self.driveSubsystem.setDefaultCommand(
       RunCommand(
         lambda: self.driveSubsystem.drive(
@@ -44,7 +42,7 @@ class RobotContainer:
           wpimath.applyDeadband(
             -self.driverController.getRightX(), DriverControllerConstants.kDriveDeadband
           ),
-          self.fieldRelative,
+          DriveSubsystem.fieldRelative,
         ),
         self.driveSubsystem,
       )
@@ -70,10 +68,10 @@ class RobotContainer:
 
     ### Manual Pickup Commands ###
     leftTriggerAxis = wpimath.applyDeadband(
-      self.operatorController.getLeftTriggerAxis, OperatorControllerConstants.kPickupDeadband
+      self.operatorController.getLeftTriggerAxis(), OperatorControllerConstants.kPickupDeadband
     )
     rightTriggerAxis = wpimath.applyDeadband(
-      self.operatorController.getRightTriggerAxis, OperatorControllerConstants.kPickupDeadband
+      self.operatorController.getRightTriggerAxis(), OperatorControllerConstants.kPickupDeadband
     )
 
     pickupCurrentCommand = self.pickupSubsystem.getCurrentCommand()
@@ -85,6 +83,9 @@ class RobotContainer:
     elif rightTriggerAxis > 0:
       self.pickupSubsystem.manualDrive(-rightTriggerAxis)
 
+    ### Shuffleboard ###
+    SmartDashboard.putBoolean("Field Relative", DriveSubsystem.fieldRelative)
+
   def configureButtonBindings(self):
     """
     Configures button functions for both the Driver and Operator XBox Controllers.
@@ -92,6 +93,10 @@ class RobotContainer:
     ### Driver Controller ###
     self.driverController.x().whileTrue(
       cmd.run(lambda: self.driveSubsystem.setX, self.driveSubsystem)
+    )
+
+    self.driverController.back().onTrue(
+      cmd.runOnce(lambda: self.driveSubsystem.toggleFieldRelative())
     )
 
     ### Operator Controller ###
