@@ -84,7 +84,7 @@ class ElevatorSubsystem(Subsystem):
       # ElevatorSubsystem.upperElevatorSwitchTriggerCount = 0
 
     SmartDashboard.putNumber(
-      "Upper Elevator Switch Trigger Count", ElevatorSubsystem.upperElevatorSwitchTriggerCount
+      "Up. Elevator Switch Trigger Count", ElevatorSubsystem.upperElevatorSwitchTriggerCount
     )
 
   def zeroPosition(self):

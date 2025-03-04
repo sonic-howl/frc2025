@@ -1,5 +1,6 @@
 import navx
 from commands2 import Subsystem
+from wpilib import SmartDashboard
 from wpimath.geometry import Pose2d, Rotation2d
 from wpimath.kinematics import (
   ChassisSpeeds,
@@ -60,6 +61,13 @@ class DriveSubsystem(Subsystem):
         self.backRight.getPosition(),
       ),
     )
+    self.updateShuffleBoard()
+
+  def updateShuffleBoard(self):
+    SmartDashboard.putNumber("Front Left Rotation", self.frontLeft.getPosition().angle.degrees())
+    SmartDashboard.putNumber("Front Right Rotation", self.frontRight.getPosition().angle.degrees())
+    SmartDashboard.putNumber("Back Left Rotation", self.backLeft.getPosition().angle.degrees())
+    SmartDashboard.putNumber("Back Right Rotation", self.backRight.getPosition().angle.degrees())
 
   def getPose(self) -> Pose2d:
     """
