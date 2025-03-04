@@ -114,6 +114,9 @@ class ElevatorSubsystemConstants:
   kLeftElevatorMotorId = 20
   kRightElevatorMotorId = 21
 
+  kUpperSwitchChannel = 0
+  kLowerSwitchChannel = 1
+
   kMiddleSetPoint = 10
   kBottomSetPoint = 5
   kScoreSetPoint = 3

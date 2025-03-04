@@ -1,10 +1,10 @@
 from commands2 import Subsystem
 from rev import (
-  SparkBase,  
+  SparkBase,
   SparkClosedLoopController,
   SparkMax,
 )
-from wpilib import DigitalInput
+from wpilib import DigitalInput, SmartDashboard
 from wpimath.controller import ElevatorFeedforward
 
 from config import Config
@@ -12,10 +12,14 @@ from constants import ElevatorSubsystemConstants
 
 
 class ElevatorSubsystem(Subsystem):
+  upperElevatorSwitchTriggerCount = 0
+  upperElevatorSwitchIncrementFlag = False
+
   def __init__(self):
     super().__init__()
 
-    # DigitalInput()
+    self.upperElevatorSwitch = DigitalInput(ElevatorSubsystemConstants.kUpperSwitchChannel)
+    self.lowerElevatorSwitch = DigitalInput(ElevatorSubsystemConstants.kLowerSwitchChannel)
 
     leftElevatorMotor = SparkMax(
       ElevatorSubsystemConstants.kLeftElevatorMotorId, SparkMax.MotorType.kBrushless
@@ -50,7 +54,38 @@ class ElevatorSubsystem(Subsystem):
     self.feedForward = ElevatorFeedforward(0, 0, 0, 0)
 
   def periodic(self):
-    pass
+    currentElevatorMotorSpeed = self.elevatorMotor.get()
+    currentUpperElevatorSwitchStatus = self.upperElevatorSwitch.get()
+
+    if currentUpperElevatorSwitchStatus and not ElevatorSubsystem.upperElevatorSwitchIncrementFlag:
+      if currentElevatorMotorSpeed > 0:
+        ElevatorSubsystem.upperElevatorSwitchTriggerCount += 1
+        ElevatorSubsystem.upperElevatorSwitchIncrementFlag = True
+      elif currentElevatorMotorSpeed < 0:
+        ElevatorSubsystem.upperElevatorSwitchTriggerCount -= 1
+        ElevatorSubsystem.upperElevatorSwitchIncrementFlag = True
+
+      if ElevatorSubsystem.upperElevatorSwitchTriggerCount >= 2:
+        currentCommand = self.getCurrentCommand()
+        if currentCommand is not None:
+          currentCommand.cancel()
+        self.stop()
+    elif (
+      not currentUpperElevatorSwitchStatus and ElevatorSubsystem.upperElevatorSwitchIncrementFlag
+    ):
+      ElevatorSubsystem.upperElevatorSwitchIncrementFlag = False
+
+    if self.lowerElevatorSwitch.get():
+      currentCommand = self.getCurrentCommand()
+      if currentCommand is not None:
+        currentCommand.cancel()
+      self.stop()
+      self.zeroPosition()
+      # ElevatorSubsystem.upperElevatorSwitchTriggerCount = 0
+
+    SmartDashboard.putNumber(
+      "Upper Elevator Switch Trigger Count", ElevatorSubsystem.upperElevatorSwitchTriggerCount
+    )
 
   def zeroPosition(self):
     self.elevatorEncoder.setPosition(0)
