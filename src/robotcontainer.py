@@ -2,6 +2,8 @@ import wpilib
 import wpimath
 from commands2 import Command, RunCommand, cmd
 from commands2.button import CommandXboxController
+from pathplannerlib.auto import AutoBuilder, NamedCommands
+from pathplannerlib.events import EventTrigger
 from wpilib import SmartDashboard
 from wpilib.cameraserver import CameraServer
 
@@ -119,15 +121,22 @@ class RobotContainer:
     )
 
   def configureAuto(self):
-    self.autoSelector = wpilib.SendableChooser()
-    self.autoSelector.setDefaultOption(
-      "Default Option (test)",
-      cmd.runOnce(lambda: print("Default Autonomous Command")),
-    )
-    self.autoSelector.addOption(
-      "Test Option", cmd.runOnce(lambda: print("Test Autonomous Command"))
-    )
-    SmartDashboard.putData("AutoSelector", self.autoSelector)
+    self.configureNamedCommands()
+    self.configureTriggerCommands()
+    # Build an auto chooser. This will use Commands.none() as the default option.
+    # Another option that allows you to specify the default auto by its name
+    self.autoChooser = AutoBuilder.buildAutoChooser()
+
+    SmartDashboard.putData("Auto Chooser", self.autoChooser)
+
+  def configureNamedCommands(self):
+    # Commands need
+    NamedCommands.registerCommand("printHello", cmd.runOnce(lambda: print("Hello")))
+
+  def configureTriggerCommands(self):
+    # More info on Command Triggers here: https://pathplanner.dev/pplib-triggers.html
+    # EventTrigger("runIntake").whileTrue(cmd.print("running intake"))
+    pass
 
   def getAutonomousCommand(self) -> Command:
-    return self.autoSelector.getSelected()
+    return self.autoChooser.getSelected()
