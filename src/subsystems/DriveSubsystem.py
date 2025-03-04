@@ -17,7 +17,7 @@ from config import Config
 from constants import DriveSubsystemConstants, RobotConstants
 from subsystems.SwerveModule import SwerveModule
 
-from .vision import LimelightHelpers
+from .limelight import LimelightHelpers
 
 
 class DriveSubsystem(Subsystem):
