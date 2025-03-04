@@ -1,6 +1,6 @@
 import math
 
-from wpimath import trajectory, units
+from wpimath import units
 from wpimath.geometry import Translation2d
 from wpimath.kinematics import SwerveDrive4Kinematics
 
@@ -13,11 +13,16 @@ class RobotConstants:
   kWheelCenterOffset = units.inchesToMeters(2)
 
 
-class ControllerConstants:
+class DriverControllerConstants:
   kDriverControllerPort = 0
-  kOperatorControllerPort = 1
 
   kDriveDeadband = 0.05
+
+
+class OperatorControllerConstants:
+  kOperatorControllerPort = 1
+
+  kElevateDeadband = 0.05
 
 
 class DriveSubsystemConstants:
@@ -43,6 +48,7 @@ class DriveSubsystemConstants:
       -((RobotConstants.y / 2) - RobotConstants.kWheelCenterOffset),
     ),
   )
+
   ### Motor Ids ### (Turning: Even, Drive: Odd) [Ids: 10-19 (18,19 are extra)]
   # Follows the WPILib Coordinate System Conventions: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
   kFrontLeftTurningMotorId = 12
@@ -85,3 +91,31 @@ class SwerveModuleConstants:
   )
 
   kDriveMotorGearRatio = 1 / kDriveMotorReduction
+
+
+class ElevatorSubsystemConstants:
+  kManualElevatorSpeed = 0.25
+
+  kP = 0
+  kI = 0
+  kD = 0
+  kClosedLoopSlot = 0
+
+  kMotorPositionFeedForward = 0
+  kMotorVelocityFeedForward = 0
+
+  kMotorForwardSoftLimit = 0
+  kMotorReverseSoftLimit = 1000
+
+  kMotorMaxVelocity = 3000
+  kMotorAcceleration = 1000
+
+  kLeftElevatorMotorId = 20
+  kRightElevatorMotorId = 21
+
+
+class PickupSubsystemConstants:
+  kPickupSpeed = 0.5
+
+  kUpperPickupMotorId = 22
+  kLowerPickupMotorId = 23

@@ -79,20 +79,14 @@ class SwerveModule:
     """
     correctDesiredState = SwerveModuleState()
     correctDesiredState.speed = desiredState.speed
-    correctDesiredState.angle = desiredState.angle.__add__(
-      Rotation2d.fromDegrees(radiansToDegrees(self.chassisAngularOffset))
-    )
+    correctDesiredState.angle = desiredState.angle.__add__(Rotation2d.fromDegrees(radiansToDegrees(self.chassisAngularOffset)))
 
     # Optimize the reference state to avoid spinning further than 90 degrees.
     correctDesiredState.optimize(Rotation2d(self.turnEncoder.getPosition()))
 
     # Command driving and turning motors towards their respective setpoints.
-    self.driveClosedLoopController.setReference(
-      correctDesiredState.speed, SparkLowLevel.ControlType.kVelocity
-    )
-    self.turnClosedLoopController.setReference(
-      correctDesiredState.angle.radians(), SparkLowLevel.ControlType.kPosition
-    )
+    self.driveClosedLoopController.setReference(correctDesiredState.speed, SparkLowLevel.ControlType.kVelocity)
+    self.turnClosedLoopController.setReference(correctDesiredState.angle.radians(), SparkLowLevel.ControlType.kPosition)
 
     self.desiredState = desiredState
 

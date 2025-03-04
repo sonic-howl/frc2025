@@ -1,8 +1,8 @@
 import math
 
-from rev import ClosedLoopConfig, SparkBaseConfig
+from rev import ClosedLoopConfig, SparkBaseConfig, SparkMaxConfig
 
-from constants import SwerveModuleConstants
+from constants import ElevatorSubsystemConstants, SwerveModuleConstants
 
 
 class Config:
@@ -38,3 +38,45 @@ class Config:
     turnConfig.closedLoop.setFeedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder).pid(
       1, 0, 0
     ).outputRange(-1, 1).positionWrappingEnabled(True).positionWrappingInputRange(0, kTurningFactor)
+
+  class ElevatorSubsystem:
+    # driveFactor = (
+    #   ElevatorSubsystemConstants.kWheelDiameter / ElevatorSubsystemConstants.kDriveMotorReduction
+    # )
+
+    ### Left Motor Config ##
+    MotorVelocityFeedForward = 0
+
+    leftMotorConfig = SparkMaxConfig()
+
+    leftMotorConfig.setIdleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(50).inverted(True)
+
+    # leftMotorConfig.softLimit.forwardSoftLimit(
+    #   ElevatorSubsystemConstants.kMotorForwardSoftLimit
+    # ).reverseSoftLimit(ElevatorSubsystemConstants.kMotorReverseSoftLimit).forwardSoftLimitEnabled(
+    #   True
+    # ).reverseSoftLimitEnabled(True)
+
+    leftMotorConfig.closedLoop.setFeedbackSensor(
+      ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
+    ).pid(
+      ElevatorSubsystemConstants.kP, ElevatorSubsystemConstants.kI, ElevatorSubsystemConstants.kD
+    ).velocityFF(ElevatorSubsystemConstants.kMotorVelocityFeedForward).outputRange(-1, 1)
+    leftMotorConfig.closedLoop.maxMotion.maxVelocity(
+      ElevatorSubsystemConstants.kMotorMaxVelocity
+    ).maxAcceleration(ElevatorSubsystemConstants.kMotorAcceleration)
+
+    ### Right Motor Config ###
+
+    rightMotorConfig = SparkMaxConfig()
+
+    rightMotorConfig.setIdleMode(SparkMaxConfig.IdleMode.kBrake).follow(
+      ElevatorSubsystemConstants.kLeftElevatorMotorId, True
+    )
+
+  class PickupSubsystem:
+    ### Lower Motor Config ###
+    lowerMotorConfig = SparkBaseConfig()
+
+    ### Upper Motor Config ###
+    upperMotorConfig = SparkBaseConfig().inverted(True)

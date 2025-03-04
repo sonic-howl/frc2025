@@ -42,7 +42,7 @@ class MyRobot(TimedCommandRobot):
       self.autonomousCommand.cancel()
 
   def teleopPeriodic(self):
-    """This function is called periodically during teleoperated mode."""
+    self.robotContainer.teleopPeriodic()
 
   def testInit(self):
     """This function is called once each time the robot enters test mode."""
