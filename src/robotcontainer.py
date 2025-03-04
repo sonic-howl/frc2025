@@ -3,11 +3,12 @@ import wpimath
 from commands2 import Command, RunCommand, cmd
 from commands2.button import CommandXboxController
 from wpilib import SmartDashboard
+from wpilib.cameraserver import CameraServer
 
 from constants import (
   DriverControllerConstants,
-  OperatorControllerConstants,
   ElevatorSubsystemConstants,
+  OperatorControllerConstants,
 )
 from subsystems.DriveSubsystem import DriveSubsystem
 from subsystems.ElevatorSubsystem import ElevatorSubsystem
@@ -16,6 +17,9 @@ from subsystems.PickupSubsystem import PickupSubsystem
 
 class RobotContainer:
   def __init__(self):
+    # Note: Vision processing shouldn't be run in the robot code. It should be run in a separate process (vision.py).
+    CameraServer.launch("vision.py:main")
+
     self.driveSubsystem = DriveSubsystem()
     self.elevatorSubsystem = ElevatorSubsystem()
     self.pickupSubsystem = PickupSubsystem()

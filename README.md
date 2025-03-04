@@ -19,6 +19,7 @@
     - [Running the Robot Simulation](#running-the-robot-simulation)
     - [Running Robot Dashboards during a Simulation](#running-robot-dashboards-during-a-simulation)
     - [Run Tests](#run-tests)
+    - [Add Camera Feed to Shuffleboard](#add-camera-feed-to-shuffleboard)
   - [Getting started](#getting-started)
     - [Installing FRC Game Tools](#installing-frc-game-tools)
     - [Installing WPILib 2025 (Python)](#installing-wpilib-2025-python)
@@ -204,6 +205,10 @@ py -3 -m robot.py test
 # Linux
 python3 -m robot.py test
 ```
+
+### Add Camera Feed to Shuffleboard
+
+Follow [these steps](https://docs.wpilib.org/en/stable/docs/software/dashboards/shuffleboard/getting-started/shuffleboard-displaying-camera.html) to display a usb camera feed to the shuffleboard.
 
 ## Getting started
 
