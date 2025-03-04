@@ -4,12 +4,12 @@ from commands2 import Command, RunCommand, cmd
 from commands2.button import CommandXboxController
 from pathplannerlib.auto import AutoBuilder, NamedCommands
 from pathplannerlib.events import EventTrigger
-from wpilib import SmartDashboard
+from wpilib import Field2d, SmartDashboard
 
 from constants import (
   DriverControllerConstants,
-  OperatorControllerConstants,
   ElevatorSubsystemConstants,
+  OperatorControllerConstants,
 )
 from subsystems.DriveSubsystem import DriveSubsystem
 from subsystems.ElevatorSubsystem import ElevatorSubsystem
@@ -18,6 +18,9 @@ from subsystems.PickupSubsystem import PickupSubsystem
 
 class RobotContainer:
   def __init__(self):
+    self.field = Field2d()
+    SmartDashboard.putData("Field", self.field)
+
     self.driveSubsystem = DriveSubsystem()
     self.elevatorSubsystem = ElevatorSubsystem()
     self.pickupSubsystem = PickupSubsystem()
@@ -84,6 +87,7 @@ class RobotContainer:
       self.pickupSubsystem.manualDrive(-rightTriggerAxis)
 
     ### Shuffleboard ###
+    self.field.setRobotPose(self.driveSubsystem.getPose())
     SmartDashboard.putBoolean("Field Relative", DriveSubsystem.fieldRelative)
 
   def configureButtonBindings(self):
