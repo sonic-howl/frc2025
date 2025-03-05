@@ -51,23 +51,29 @@ class RobotContainer:
       )
     )
 
-    self.elevatorSubsystem.setDefaultCommand(
-      RunCommand(lambda: self.elevatorSubsystem.stop(), self.elevatorSubsystem)
-    )
-    self.pickupSubsystem.setDefaultCommand(
-      RunCommand(lambda: self.pickupSubsystem.stop(), self.pickupSubsystem)
-    )
+    # self.elevatorSubsystem.setDefaultCommand(
+    #   RunCommand(lambda: self.elevatorSubsystem.stop(), self.elevatorSubsystem)
+    # )
+    # self.pickupSubsystem.setDefaultCommand(
+    #   RunCommand(lambda: self.pickupSubsystem.stop(), self.pickupSubsystem)
+    # )
 
   def teleopPeriodic(self):
     ### Manual Elevator Commands ###
     y = wpimath.applyDeadband(
-      self.operatorController.getLeftY(), OperatorControllerConstants.kElevateDeadband
+      -self.operatorController.getLeftY(), OperatorControllerConstants.kElevateDeadband
     )
+    SmartDashboard.putNumber("Op. Left Y", abs(y))
     if abs(y) > 0:
-      elevatorCurrentCommand = self.elevatorSubsystem.getCurrentCommand()
-      if elevatorCurrentCommand is not None:
-        elevatorCurrentCommand.cancel()
-      self.elevatorSubsystem.manualDrive(-y)
+      self.elevatorSubsystem.manualDrive(y)
+    elif self.operatorController.povUp().getAsBoolean():
+      self.elevatorSubsystem.goToPosition(ElevatorSubsystemConstants.kMiddleSetPoint)
+    elif self.operatorController.povRight().getAsBoolean():
+      self.elevatorSubsystem.goToPosition(ElevatorSubsystemConstants.kBottomSetPoint)
+    elif self.operatorController.povDown().getAsBoolean():
+      self.elevatorSubsystem.goToPosition(ElevatorSubsystemConstants.kScoreSetPoint)
+    else:
+      self.elevatorSubsystem.manualDrive(0)
 
     ### Manual Pickup Commands ###
     leftTriggerAxis = wpimath.applyDeadband(
@@ -82,9 +88,11 @@ class RobotContainer:
       pickupCurrentCommand.cancel()
 
     if leftTriggerAxis > 0:
-      self.pickupSubsystem.manualDrive(leftTriggerAxis)
+      self.pickupSubsystem.manualDrive(-leftTriggerAxis)
     elif rightTriggerAxis > 0:
-      self.pickupSubsystem.manualDrive(-rightTriggerAxis)
+      self.pickupSubsystem.manualDrive(rightTriggerAxis)
+    else:
+      self.pickupSubsystem.stop()
 
     ### Shuffleboard ###
     self.field.setRobotPose(self.driveSubsystem.getPose())
@@ -104,26 +112,28 @@ class RobotContainer:
     )
 
     ### Operator Controller ###
-    self.operatorController.y().onTrue(RunCommand(lambda: self.elevatorSubsystem.zeroPosition()))
+    self.operatorController.y().onTrue(
+      cmd.runOnce(lambda: self.elevatorSubsystem.zeroPosition(), self.elevatorSubsystem)
+    )
 
-    self.operatorController.povUp().onTrue(
-      cmd.runOnce(
+    """ self.operatorController.povUp().whileTrue(
+      cmd.run(
         lambda: self.elevatorSubsystem.goToPosition(ElevatorSubsystemConstants.kMiddleSetPoint),
         self.elevatorSubsystem,
       )
     )
-    self.operatorController.povRight().onTrue(
-      cmd.runOnce(
+    self.operatorController.povRight().whileTrue(
+      cmd.run(
         lambda: self.elevatorSubsystem.goToPosition(ElevatorSubsystemConstants.kBottomSetPoint),
         self.elevatorSubsystem,
       )
     )
-    self.operatorController.povDown().onTrue(
-      cmd.runOnce(
+    self.operatorController.povDown().whileTrue(
+      cmd.run(
         lambda: self.elevatorSubsystem.goToPosition(ElevatorSubsystemConstants.kScoreSetPoint),
         self.elevatorSubsystem,
       )
-    )
+    ) """
 
   def configureAuto(self):
     self.configureNamedCommands()

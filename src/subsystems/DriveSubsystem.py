@@ -104,10 +104,10 @@ class DriveSubsystem(Subsystem):
     self.updateShuffleBoard()
 
   def updateShuffleBoard(self):
-    SmartDashboard.putNumber("Front Left Rotation", self.frontLeft.getPosition().angle.degrees())
-    SmartDashboard.putNumber("Front Right Rotation", self.frontRight.getPosition().angle.degrees())
-    SmartDashboard.putNumber("Back Left Rotation", self.backLeft.getPosition().angle.degrees())
-    SmartDashboard.putNumber("Back Right Rotation", self.backRight.getPosition().angle.degrees())
+    SmartDashboard.putNumber("FL Rot.", self.frontLeft.getPosition().angle.degrees())
+    SmartDashboard.putNumber("FR Rot.", self.frontRight.getPosition().angle.degrees())
+    SmartDashboard.putNumber("BL Rot.", self.backLeft.getPosition().angle.degrees())
+    SmartDashboard.putNumber("BR Rot.", self.backRight.getPosition().angle.degrees())
 
   def getPose(self) -> Pose2d:
     """

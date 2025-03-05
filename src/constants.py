@@ -97,7 +97,12 @@ class SwerveModuleConstants:
 class ElevatorSubsystemConstants:
   kManualElevatorSpeed = 0.25
 
-  kP = 0
+  kS = 0
+  kG = 0.3
+  kV = 0
+  kA = 0
+
+  kP = 1
   kI = 0
   kD = 0
   kClosedLoopSlot = 0
@@ -105,22 +110,21 @@ class ElevatorSubsystemConstants:
   kMotorPositionFeedForward = 0
   kMotorVelocityFeedForward = 0
 
-  kMotorForwardSoftLimit = 0
-  kMotorReverseSoftLimit = 1000
+  kMotorForwardSoftLimit = 29.595003128051758
+  kMotorReverseSoftLimit = 0
 
-  kMotorMaxVelocity = 3000
-  kMotorAcceleration = 1000
+  kMotorMaxVelocity = 1
+  kMotorAcceleration = 1
+
+  kMiddleSetPoint = 0.75
+  kBottomSetPoint = 0.5
+  kScoreSetPoint = 0.25
 
   kLeftElevatorMotorId = 20
   kRightElevatorMotorId = 21
 
   kUpperSwitchChannel = 0
   kLowerSwitchChannel = 1
-
-  kMiddleSetPoint = 10
-  kBottomSetPoint = 5
-  kScoreSetPoint = 3
-
 
 
 class PickupSubsystemConstants:

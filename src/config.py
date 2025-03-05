@@ -2,6 +2,7 @@ import math
 
 from pathplannerlib.config import PIDConstants
 from rev import ClosedLoopConfig, SparkBaseConfig, SparkMaxConfig
+from wpimath import units
 
 from constants import ElevatorSubsystemConstants, SwerveModuleConstants
 
@@ -29,7 +30,7 @@ class Config:
     kTurningFactor = 2 * math.pi
 
     turnConfig = SparkBaseConfig()
-    turnConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20)
+    turnConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(25)
 
     turnConfig.absoluteEncoder.inverted(True).positionConversionFactor(
       kTurningFactor
@@ -41,29 +42,32 @@ class Config:
     ).outputRange(-1, 1).positionWrappingEnabled(True).positionWrappingInputRange(0, kTurningFactor)
 
   class ElevatorSubsystem:
-    # driveFactor = (
-    #   ElevatorSubsystemConstants.kWheelDiameter / ElevatorSubsystemConstants.kDriveMotorReduction
-    # )
+    inchesToTop = 36.25
+    encoderTicksToTop = 30
+    drivingFactor = units.inchesToMeters(inchesToTop) / encoderTicksToTop
 
     ### Left Motor Config ##
     MotorVelocityFeedForward = 0
 
     leftMotorConfig = SparkMaxConfig()
 
-    leftMotorConfig.setIdleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(50).inverted(True)
+    leftMotorConfig.setIdleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(40)
+
+    leftMotorConfig.encoder.positionConversionFactor(drivingFactor).velocityConversionFactor(
+      drivingFactor / 60
+    )
 
     # leftMotorConfig.softLimit.forwardSoftLimit(
     #   ElevatorSubsystemConstants.kMotorForwardSoftLimit
     # ).reverseSoftLimit(ElevatorSubsystemConstants.kMotorReverseSoftLimit).forwardSoftLimitEnabled(
     #   True
     # ).reverseSoftLimitEnabled(True)
+    leftMotorConfig.closedLoopRampRate(0.1)
 
-    leftMotorConfig.closedLoop.setFeedbackSensor(
-      ClosedLoopConfig.FeedbackSensor.kPrimaryEncoder
-    ).pid(
+    leftMotorConfig.closedLoop.pid(
       ElevatorSubsystemConstants.kP, ElevatorSubsystemConstants.kI, ElevatorSubsystemConstants.kD
     ).velocityFF(ElevatorSubsystemConstants.kMotorVelocityFeedForward).outputRange(-1, 1)
-    leftMotorConfig.closedLoop.maxMotion.maxVelocity(
+    leftMotorConfig.closedLoop.maxMotion.allowedClosedLoopError(0).maxVelocity(
       ElevatorSubsystemConstants.kMotorMaxVelocity
     ).maxAcceleration(ElevatorSubsystemConstants.kMotorAcceleration)
 

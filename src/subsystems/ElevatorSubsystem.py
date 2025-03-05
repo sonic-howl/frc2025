@@ -51,28 +51,34 @@ class ElevatorSubsystem(Subsystem):
 
     ### Elevator Feed Forward ###
     # https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html
-    self.feedForward = ElevatorFeedforward(0, 0, 0, 0)
+    self.feedForward = ElevatorFeedforward(
+      ElevatorSubsystemConstants.kS,
+      ElevatorSubsystemConstants.kG,
+      ElevatorSubsystemConstants.kV,
+      ElevatorSubsystemConstants.kA,
+    )
 
   def periodic(self):
-    currentElevatorMotorSpeed = self.elevatorMotor.get()
+    """currentElevatorMotorSpeed = self.elevatorMotor.get()
     currentUpperElevatorSwitchStatus = self.upperElevatorSwitch.get()
 
-    if currentUpperElevatorSwitchStatus and not ElevatorSubsystem.upperElevatorSwitchIncrementFlag:
-      if currentElevatorMotorSpeed > 0:
-        ElevatorSubsystem.upperElevatorSwitchTriggerCount += 1
-        ElevatorSubsystem.upperElevatorSwitchIncrementFlag = True
-      elif currentElevatorMotorSpeed < 0:
-        ElevatorSubsystem.upperElevatorSwitchTriggerCount -= 1
-        ElevatorSubsystem.upperElevatorSwitchIncrementFlag = True
+    currentUpperElevatorSwitchStatus = not currentUpperElevatorSwitchStatus
+
+    if currentUpperElevatorSwitchStatus:
+      if not ElevatorSubsystem.upperElevatorSwitchIncrementFlag:
+        if currentElevatorMotorSpeed > 0:
+          ElevatorSubsystem.upperElevatorSwitchTriggerCount += 1
+          ElevatorSubsystem.upperElevatorSwitchIncrementFlag = True
+        elif currentElevatorMotorSpeed < 0:
+          ElevatorSubsystem.upperElevatorSwitchTriggerCount -= 1
+          ElevatorSubsystem.upperElevatorSwitchIncrementFlag = True
 
       if ElevatorSubsystem.upperElevatorSwitchTriggerCount >= 2:
         currentCommand = self.getCurrentCommand()
         if currentCommand is not None:
           currentCommand.cancel()
         self.stop()
-    elif (
-      not currentUpperElevatorSwitchStatus and ElevatorSubsystem.upperElevatorSwitchIncrementFlag
-    ):
+    elif ElevatorSubsystem.upperElevatorSwitchIncrementFlag:
       ElevatorSubsystem.upperElevatorSwitchIncrementFlag = False
 
     if self.lowerElevatorSwitch.get():
@@ -80,9 +86,12 @@ class ElevatorSubsystem(Subsystem):
       if currentCommand is not None:
         currentCommand.cancel()
       self.stop()
-      self.zeroPosition()
-      # ElevatorSubsystem.upperElevatorSwitchTriggerCount = 0
+      self.zeroPosition()"""
+    # ElevatorSubsystem.upperElevatorSwitchTriggerCount = 0
 
+    SmartDashboard.putNumber("Elevator Position", self.elevatorEncoder.getPosition())
+    SmartDashboard.putBoolean("Upper Limit", self.upperElevatorSwitch.get())
+    SmartDashboard.putBoolean("Lower Limit", self.lowerElevatorSwitch.get())
     SmartDashboard.putNumber(
       "Up. Elevator Switch Trigger Count", ElevatorSubsystem.upperElevatorSwitchTriggerCount
     )
@@ -95,9 +104,21 @@ class ElevatorSubsystem(Subsystem):
     Raises or Lowers the elevator at the speed determined by manua user input.
 
     ::param speed: User input speed from controller. (-1 to 1)"""
+    # if (
+    #   ElevatorSubsystem.upperElevatorSwitchIncrementFlag >= 2 or not self.lowerElevatorSwitch.get()
+    # ):
+    #   return
+
     deliveredSpeed = speed * ElevatorSubsystemConstants.kManualElevatorSpeed
 
-    self.elevatorMotor.set(deliveredSpeed)
+    # self.elevatorMotor.set(deliveredSpeed)
+
+    self.elevatorClosedLoopController.setReference(
+      deliveredSpeed,
+      SparkMax.ControlType.kVelocity,
+      arbFeedforward=self.feedForward.calculate(self.elevatorEncoder.getVelocity()),
+      arbFFUnits=SparkClosedLoopController.ArbFFUnits.kVoltage,
+    )
 
   def goToPosition(self, position: float):
     """
@@ -106,10 +127,11 @@ class ElevatorSubsystem(Subsystem):
     ::param position: Desired Position"""
     self.elevatorClosedLoopController.setReference(
       position,
-      SparkMax.ControlType.kMAXMotionPositionControl,
+      SparkMax.ControlType.kPosition,
       arbFeedforward=self.feedForward.calculate(self.elevatorEncoder.getVelocity()),
       arbFFUnits=SparkClosedLoopController.ArbFFUnits.kVoltage,
     )
+    SmartDashboard.putNumber("Elevator Reference Point", position)
 
   def stop(self):
     self.elevatorMotor.set(0)
