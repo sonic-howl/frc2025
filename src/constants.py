@@ -104,7 +104,7 @@ class ElevatorSubsystemConstants:
   kV = 3
   kA = 0
 
-  kP = 0.35
+  kP = 0.375
   kI = 0
   kD = 0
   kClosedLoopSlot = 0
