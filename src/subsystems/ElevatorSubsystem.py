@@ -89,12 +89,12 @@ class ElevatorSubsystem(Subsystem):
       self.zeroPosition()"""
     # ElevatorSubsystem.upperElevatorSwitchTriggerCount = 0
 
-    SmartDashboard.putNumber("Elevator Position", self.elevatorEncoder.getPosition())
-    SmartDashboard.putBoolean("Upper Limit", self.upperElevatorSwitch.get())
-    SmartDashboard.putBoolean("Lower Limit", self.lowerElevatorSwitch.get())
-    SmartDashboard.putNumber(
-      "Up. Elevator Switch Trigger Count", ElevatorSubsystem.upperElevatorSwitchTriggerCount
-    )
+    # SmartDashboard.putNumber("Elevator Position", self.elevatorEncoder.getPosition())
+    # SmartDashboard.putBoolean("Upper Limit", self.upperElevatorSwitch.get())
+    # SmartDashboard.putBoolean("Lower Limit", self.lowerElevatorSwitch.get())
+    # SmartDashboard.putNumber(
+    #   "Up. Elevator Switch Trigger Count", ElevatorSubsystem.upperElevatorSwitchTriggerCount
+    # )
 
   def zeroPosition(self):
     self.elevatorEncoder.setPosition(0)
@@ -115,7 +115,7 @@ class ElevatorSubsystem(Subsystem):
 
     self.elevatorClosedLoopController.setReference(
       deliveredSpeed,
-      SparkMax.ControlType.kMAXMotionVelocityControl,
+      SparkMax.ControlType.kVelocity,
       arbFeedforward=self.feedForward.calculate(self.elevatorEncoder.getVelocity()),
       arbFFUnits=SparkClosedLoopController.ArbFFUnits.kVoltage,
     )

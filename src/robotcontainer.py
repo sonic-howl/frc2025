@@ -63,25 +63,28 @@ class RobotContainer:
   def drive(self):
     square = 2.0 if SwerveModuleConstants.squareInputs else 1.0
 
-    x = wpimath.applyDeadband(
-      self.driverController.getLeftX(), DriverControllerConstants.kDriveDeadband
-    )
-    x = self.xLimiter.calculate(x)
-
     y = wpimath.applyDeadband(
       self.driverController.getLeftY(), DriverControllerConstants.kDriveDeadband
     )
-    y = self.yLimiter.calculate(y)
+    # y = self.yLimiter.calculate(y)
+    y = -(y**square * sign(y))
+
+    x = wpimath.applyDeadband(
+      self.driverController.getLeftX(), DriverControllerConstants.kDriveDeadband
+    )
+    # x = self.xLimiter.calculate(x)
+    x = -(x**square * sign(x))
 
     z = wpimath.applyDeadband(
       self.driverController.getRightX(), DriverControllerConstants.kDriveDeadband
     )
-    z = self.zLimiter.calculate(z)
+    # z = self.zLimiter.calculate(z)
+    z = -(z**square * sign(z))
 
     self.driveSubsystem.drive(
-      -(y**square * sign(y)),
-      -(x**square * sign(x)),
-      -(z**square * sign(z)),
+      y,
+      x,
+      z,
       DriveSubsystem.fieldRelative,
     )
 

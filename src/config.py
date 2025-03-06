@@ -16,7 +16,7 @@ class Config:
     drivingVelocityFeedForward = 0
 
     driveConfig = SparkBaseConfig()
-    driveConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(50).inverted(False)
+    driveConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(25).inverted(False)
 
     driveConfig.encoder.positionConversionFactor(drivingFactor).velocityConversionFactor(
       drivingFactor / 60
@@ -30,7 +30,7 @@ class Config:
     kTurningFactor = 2 * math.pi
 
     turnConfig = SparkBaseConfig()
-    turnConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(25)
+    turnConfig.setIdleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(15)
 
     turnConfig.absoluteEncoder.inverted(True).positionConversionFactor(
       kTurningFactor
@@ -51,7 +51,7 @@ class Config:
 
     leftMotorConfig = SparkMaxConfig()
 
-    leftMotorConfig.setIdleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(40)
+    leftMotorConfig.setIdleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(29)
 
     leftMotorConfig.encoder.positionConversionFactor(drivingFactor).velocityConversionFactor(
       drivingFactor / 60
@@ -75,7 +75,7 @@ class Config:
 
     rightMotorConfig = SparkMaxConfig()
 
-    rightMotorConfig.setIdleMode(SparkMaxConfig.IdleMode.kBrake).follow(
+    rightMotorConfig.setIdleMode(SparkMaxConfig.IdleMode.kBrake).smartCurrentLimit(29).follow(
       ElevatorSubsystemConstants.kLeftElevatorMotorId, True
     )
 
