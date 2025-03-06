@@ -145,11 +145,13 @@ class DriveSubsystem(Subsystem):
     """
     Returns the current speeds of the robot.
     """
-    DriveSubsystemConstants.kDriveKinematics.toChassisSpeeds(
-      self.frontLeft.getState(),
-      self.frontRight.getState(),
-      self.backLeft.getState(),
-      self.backRight.getState(),
+    return DriveSubsystemConstants.kDriveKinematics.toChassisSpeeds(
+      (
+        self.frontLeft.getState(),
+        self.frontRight.getState(),
+        self.backLeft.getState(),
+        self.backRight.getState(),
+      )
     )
 
   def getRobotRelativeSpeeds(self) -> ChassisSpeeds:
@@ -216,9 +218,7 @@ class DriveSubsystem(Subsystem):
     """
     targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02)
 
-    swerveModuleStates = DriveSubsystemConstants.kDriveKinematics.toSwerveModuleStates(
-      ChassisSpeeds(targetSpeeds)
-    )
+    swerveModuleStates = DriveSubsystemConstants.kDriveKinematics.toSwerveModuleStates(targetSpeeds)
 
     states = SwerveDrive4Kinematics.desaturateWheelSpeeds(
       swerveModuleStates, DriveSubsystemConstants.kMaxSpeedMetersPerSecond
@@ -229,7 +229,7 @@ class DriveSubsystem(Subsystem):
     self.backLeft.setDesiredState(states[2])
     self.backRight.setDesiredState(states[3])
 
-  def shouldFlipPath():
+  def shouldFlipPath(self):
     # Boolean supplier that controls when the path will be mirrored for the red alliance
     # This will flip the path being followed to the red side of the field.
     # THE ORIGIN WILL REMAIN ON THE BLUE SIDE

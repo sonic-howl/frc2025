@@ -76,12 +76,12 @@ class RobotContainer:
     z = wpimath.applyDeadband(
       self.driverController.getRightX(), DriverControllerConstants.kDriveDeadband
     )
-    z = self.zLimiter.calculate(z)
+    # z = self.zLimiter.calculate(z)
 
     self.driveSubsystem.drive(
       -(y**square * sign(y)),
       -(x**square * sign(x)),
-      -(z**square * sign(z)),
+      -z,
       DriveSubsystem.fieldRelative,
     )
 
