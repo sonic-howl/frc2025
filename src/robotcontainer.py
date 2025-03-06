@@ -3,6 +3,7 @@ import wpimath
 from commands2 import Command, RunCommand, cmd
 from commands2.button import CommandXboxController
 from pathplannerlib.auto import AutoBuilder, NamedCommands
+from pathplannerlib.events import EventTrigger
 from wpilib import Field2d, SmartDashboard
 
 from constants import (

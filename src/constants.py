@@ -27,7 +27,7 @@ class OperatorControllerConstants:
 
 
 class DriveSubsystemConstants:
-  kMaxSpeedMetersPerSecond = 1
+  kMaxSpeedMetersPerSecond = 4.5
   kMaxAngularSpeed = (math.pi * 2) * 0.5  # 0.5 rotation per second (in radians)
 
   # WPILib Coordinate System Conventions: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
