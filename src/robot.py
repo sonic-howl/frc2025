@@ -27,10 +27,12 @@ class MyRobot(TimedCommandRobot):
   def autonomousInit(self):
     """This function is run once each time the robot enters autonomous mode."""
 
-    self.autonomousCommand = self.robotContainer.getAutonomousCommand()
+    self.robotContainer.autonomousInit()
 
-    if self.autonomousCommand:
-      self.autonomousCommand.schedule()
+    # self.autonomousCommand = self.robotContainer.getAutonomousCommand()
+
+    # if self.autonomousCommand:
+    #   self.autonomousCommand.schedule()
 
   def autonomousPeriodic(self):
     """This function is called periodically during autonomous."""
