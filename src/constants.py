@@ -93,6 +93,8 @@ class SwerveModuleConstants:
 
   kDriveMotorGearRatio = 1 / kDriveMotorReduction
 
+  squareInputs = True
+
 
 class ElevatorSubsystemConstants:
   kManualElevatorSpeed = 0.25

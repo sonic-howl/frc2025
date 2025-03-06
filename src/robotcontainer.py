@@ -3,13 +3,13 @@ import wpimath
 from commands2 import Command, RunCommand, cmd
 from commands2.button import CommandXboxController
 from pathplannerlib.auto import AutoBuilder, NamedCommands
-from pathplannerlib.events import EventTrigger
 from wpilib import Field2d, SmartDashboard
 
 from constants import (
   DriverControllerConstants,
   ElevatorSubsystemConstants,
   OperatorControllerConstants,
+  SwerveModuleConstants,
 )
 from subsystems.DriveSubsystem import DriveSubsystem
 from subsystems.ElevatorSubsystem import ElevatorSubsystem
@@ -33,17 +33,19 @@ class RobotContainer:
     self.configureButtonBindings()
     self.configureAuto()
 
+    square = 2.0 if SwerveModuleConstants.squareInputs else 1.0
+
     self.driveSubsystem.setDefaultCommand(
       RunCommand(
         lambda: self.driveSubsystem.drive(
           wpimath.applyDeadband(
-            -self.driverController.getLeftY(), DriverControllerConstants.kDriveDeadband
+            -(self.driverController.getLeftY() ** square), DriverControllerConstants.kDriveDeadband
           ),
           wpimath.applyDeadband(
-            -self.driverController.getLeftX(), DriverControllerConstants.kDriveDeadband
+            -(self.driverController.getLeftX() ** square), DriverControllerConstants.kDriveDeadband
           ),
           wpimath.applyDeadband(
-            -self.driverController.getRightX(), DriverControllerConstants.kDriveDeadband
+            -(self.driverController.getRightX() ** square), DriverControllerConstants.kDriveDeadband
           ),
           DriveSubsystem.fieldRelative,
         ),
