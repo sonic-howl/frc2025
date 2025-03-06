@@ -115,7 +115,7 @@ class ElevatorSubsystem(Subsystem):
 
     self.elevatorClosedLoopController.setReference(
       deliveredSpeed,
-      SparkMax.ControlType.kVelocity,
+      SparkMax.ControlType.kMAXMotionVelocityControl,
       arbFeedforward=self.feedForward.calculate(self.elevatorEncoder.getVelocity()),
       arbFFUnits=SparkClosedLoopController.ArbFFUnits.kVoltage,
     )

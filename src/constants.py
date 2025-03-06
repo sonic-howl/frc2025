@@ -27,7 +27,7 @@ class OperatorControllerConstants:
 
 
 class DriveSubsystemConstants:
-  kMaxSpeedMetersPerSecond = 4.5
+  kMaxSpeedMetersPerSecond = 4  # TODO
   kMaxAngularSpeed = (math.pi * 2) * 0.5  # 0.5 rotation per second (in radians)
 
   # WPILib Coordinate System Conventions: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
@@ -97,28 +97,25 @@ class SwerveModuleConstants:
 
 
 class ElevatorSubsystemConstants:
-  kManualElevatorSpeed = 0.25
+  kManualElevatorSpeed = 0.75
 
   kS = 0
   kG = 0.3
-  kV = 1
+  kV = 3
   kA = 0
 
-  kP = 0.5
+  kP = 0.35
   kI = 0
   kD = 0
   kClosedLoopSlot = 0
 
-  kMotorPositionFeedForward = 0
-  kMotorVelocityFeedForward = 0
-
-  kMotorForwardSoftLimit = 29.595003128051758
+  kMotorForwardSoftLimit = 0.88
   kMotorReverseSoftLimit = 0
 
-  kMotorMaxVelocity = 1
-  kMotorAcceleration = 1
+  kMotorMaxVelocity = 1.5
+  kMotorAcceleration = 4
 
-  kMiddleSetPoint = 0.75
+  kMiddleSetPoint = 0.86
   kBottomSetPoint = 0.5
   kScoreSetPoint = 0.25
 

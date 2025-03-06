@@ -1,4 +1,4 @@
-# Set your GitHub username and email
+t# Set your GitHub username and email
 USERNAME="NathanGrenier" # Make sure to remove the {}
 EMAIL="nathangrenier01@gmail.com" # Make sure to remove the {}
 

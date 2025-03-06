@@ -108,6 +108,7 @@ class DriveSubsystem(Subsystem):
     SmartDashboard.putNumber("FR Rot.", self.frontRight.getPosition().angle.degrees())
     SmartDashboard.putNumber("BL Rot.", self.backLeft.getPosition().angle.degrees())
     SmartDashboard.putNumber("BR Rot.", self.backRight.getPosition().angle.degrees())
+    SmartDashboard.putNumber("Gryo", self.odometry.getEstimatedPosition().rotation().degrees())
 
   def getPose(self) -> Pose2d:
     """

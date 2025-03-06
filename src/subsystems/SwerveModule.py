@@ -15,6 +15,7 @@ class SwerveModule:
     self,
     driveMotorId: int,
     turnMotorId: int,
+    # zeroOffset: float,
     chassisAngularOffset: float = 0,
   ):
     """Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
@@ -39,6 +40,8 @@ class SwerveModule:
     ### Closed Loop Controllers ### (Drive Motor can only get the CLC output, not the CLC object)
     self.driveClosedLoopController = self.driveMotor.getClosedLoopController()
     self.turnClosedLoopController = self.turnMotor.getClosedLoopController()
+
+    # Config.MAXSwerveModule.driveConfig.absoluteEncoder.zeroOffset(zeroOffset)
 
     ### Apply Motor Controller Configs ###
     self.driveMotor.configure(
@@ -79,14 +82,20 @@ class SwerveModule:
     """
     correctDesiredState = SwerveModuleState()
     correctDesiredState.speed = desiredState.speed
-    correctDesiredState.angle = desiredState.angle.__add__(Rotation2d.fromDegrees(radiansToDegrees(self.chassisAngularOffset)))
+    correctDesiredState.angle = desiredState.angle.__add__(
+      Rotation2d.fromDegrees(radiansToDegrees(self.chassisAngularOffset))
+    )
 
     # Optimize the reference state to avoid spinning further than 90 degrees.
     correctDesiredState.optimize(Rotation2d(self.turnEncoder.getPosition()))
 
     # Command driving and turning motors towards their respective setpoints.
-    self.driveClosedLoopController.setReference(correctDesiredState.speed, SparkLowLevel.ControlType.kVelocity)
-    self.turnClosedLoopController.setReference(correctDesiredState.angle.radians(), SparkLowLevel.ControlType.kPosition)
+    self.driveClosedLoopController.setReference(
+      correctDesiredState.speed, SparkLowLevel.ControlType.kVelocity
+    )
+    self.turnClosedLoopController.setReference(
+      correctDesiredState.angle.radians(), SparkLowLevel.ControlType.kPosition
+    )
 
     self.desiredState = desiredState
 

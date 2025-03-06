@@ -57,16 +57,16 @@ class Config:
       drivingFactor / 60
     )
 
-    # leftMotorConfig.softLimit.forwardSoftLimit(
-    #   ElevatorSubsystemConstants.kMotorForwardSoftLimit
-    # ).reverseSoftLimit(ElevatorSubsystemConstants.kMotorReverseSoftLimit).forwardSoftLimitEnabled(
-    #   True
-    # ).reverseSoftLimitEnabled(True)
+    leftMotorConfig.softLimit.forwardSoftLimit(
+      ElevatorSubsystemConstants.kMotorForwardSoftLimit
+    ).reverseSoftLimit(ElevatorSubsystemConstants.kMotorReverseSoftLimit).forwardSoftLimitEnabled(
+      True
+    ).reverseSoftLimitEnabled(True)
     leftMotorConfig.closedLoopRampRate(0.1)
 
     leftMotorConfig.closedLoop.pid(
       ElevatorSubsystemConstants.kP, ElevatorSubsystemConstants.kI, ElevatorSubsystemConstants.kD
-    ).velocityFF(ElevatorSubsystemConstants.kMotorVelocityFeedForward).outputRange(-1, 1)
+    ).outputRange(-1, 1)
     leftMotorConfig.closedLoop.maxMotion.allowedClosedLoopError(0).maxVelocity(
       ElevatorSubsystemConstants.kMotorMaxVelocity
     ).maxAcceleration(ElevatorSubsystemConstants.kMotorAcceleration)
@@ -81,10 +81,10 @@ class Config:
 
   class PickupSubsystem:
     ### Lower Motor Config ###
-    lowerMotorConfig = SparkBaseConfig()
+    lowerMotorConfig = SparkBaseConfig().smartCurrentLimit(10).openLoopRampRate(0.2)
 
     ### Upper Motor Config ###
-    upperMotorConfig = SparkBaseConfig().inverted(True)
+    upperMotorConfig = SparkBaseConfig().inverted(True).smartCurrentLimit(10).openLoopRampRate(0.2)
 
   class DriveSubsystem:
     translationPPHolonominicDrivePID = PIDConstants(5.0, 0.0, 0.0)

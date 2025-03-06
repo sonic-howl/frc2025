@@ -1,3 +1,5 @@
+import math
+
 import wpilib
 import wpimath
 from commands2 import Command, RunCommand, cmd
@@ -5,6 +7,7 @@ from commands2.button import CommandXboxController
 from pathplannerlib.auto import AutoBuilder, NamedCommands
 from pathplannerlib.events import EventTrigger
 from wpilib import Field2d, SmartDashboard
+from wpimath.filter import SlewRateLimiter
 
 from constants import (
   DriverControllerConstants,
@@ -15,6 +18,10 @@ from constants import (
 from subsystems.DriveSubsystem import DriveSubsystem
 from subsystems.ElevatorSubsystem import ElevatorSubsystem
 from subsystems.PickupSubsystem import PickupSubsystem
+
+
+def sign(x: float):
+  return 1 if x > 0 else -1
 
 
 class RobotContainer:
@@ -34,25 +41,17 @@ class RobotContainer:
     self.configureButtonBindings()
     self.configureAuto()
 
-    square = 2.0 if SwerveModuleConstants.squareInputs else 1.0
-
     self.driveSubsystem.setDefaultCommand(
       RunCommand(
-        lambda: self.driveSubsystem.drive(
-          wpimath.applyDeadband(
-            -(self.driverController.getLeftY() ** square), DriverControllerConstants.kDriveDeadband
-          ),
-          wpimath.applyDeadband(
-            -(self.driverController.getLeftX() ** square), DriverControllerConstants.kDriveDeadband
-          ),
-          wpimath.applyDeadband(
-            -(self.driverController.getRightX() ** square), DriverControllerConstants.kDriveDeadband
-          ),
-          DriveSubsystem.fieldRelative,
-        ),
+        lambda: self.drive(),
         self.driveSubsystem,
       )
     )
+
+    # Slew rate limiters
+    self.xLimiter = SlewRateLimiter(2)
+    self.yLimiter = SlewRateLimiter(2)
+    self.zLimiter = SlewRateLimiter(3)
 
     # self.elevatorSubsystem.setDefaultCommand(
     #   RunCommand(lambda: self.elevatorSubsystem.stop(), self.elevatorSubsystem)
@@ -60,6 +59,31 @@ class RobotContainer:
     # self.pickupSubsystem.setDefaultCommand(
     #   RunCommand(lambda: self.pickupSubsystem.stop(), self.pickupSubsystem)
     # )
+
+  def drive(self):
+    square = 2.0 if SwerveModuleConstants.squareInputs else 1.0
+
+    x = wpimath.applyDeadband(
+      self.driverController.getLeftX(), DriverControllerConstants.kDriveDeadband
+    )
+    x = self.xLimiter.calculate(x)
+
+    y = wpimath.applyDeadband(
+      self.driverController.getLeftY(), DriverControllerConstants.kDriveDeadband
+    )
+    y = self.yLimiter.calculate(y)
+
+    z = wpimath.applyDeadband(
+      self.driverController.getRightX(), DriverControllerConstants.kDriveDeadband
+    )
+    z = self.zLimiter.calculate(z)
+
+    self.driveSubsystem.drive(
+      -(y**square * sign(y)),
+      -(x**square * sign(x)),
+      -(z**square * sign(z)),
+      DriveSubsystem.fieldRelative,
+    )
 
   def teleopPeriodic(self):
     ### Manual Elevator Commands ###
