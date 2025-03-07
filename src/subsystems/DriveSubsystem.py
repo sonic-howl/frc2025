@@ -19,7 +19,7 @@ from config import Config
 from constants import DriveSubsystemConstants, RobotConstants
 from subsystems.SwerveModule import SwerveModule
 
-from .vision import LimelightHelpers
+from .limelight import LimelightHelpers
 
 
 class DriveSubsystem(Subsystem):
@@ -104,7 +104,7 @@ class DriveSubsystem(Subsystem):
     self.odometry.setVisionMeasurementStdDevs([0.7, 0.7, 9999999])
     self.odometry.addVisionMeasurement(pose, timestamp)
 
-    self.updateShuffleBoard()
+    # self.updateShuffleBoard()
 
   def updateShuffleBoard(self):
     SmartDashboard.putNumber("FL Rot.", self.frontLeft.getPosition().angle.degrees())
