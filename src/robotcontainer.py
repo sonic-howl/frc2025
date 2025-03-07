@@ -27,6 +27,8 @@ def sign(x: float):
 class RobotContainer:
   def __init__(self):
     self.field = Field2d()
+    self.timer = Timer()
+
     SmartDashboard.putData("Field", self.field)
 
     self.driveSubsystem = DriveSubsystem()
@@ -90,12 +92,14 @@ class RobotContainer:
 
   def autonomousInit(self):
     # print("auto chosen", self.autoChooser.getSelected())
-    self.timer = Timer()
     self.timer.start()
+
+  def teleopInit(self):
+    self.timer.restart()
 
   def autonomousPeriodic(self):
     if not self.timer.hasElapsed(1):
-      self.driveSubsystem.drive(0.25, 0, 0, False)
+      self.driveSubsystem.drive(0.75, 0, 0, False)
       # print("Driving")
     else:
       self.driveSubsystem.drive(0, 0, 0, False)

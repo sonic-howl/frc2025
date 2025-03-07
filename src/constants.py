@@ -27,8 +27,8 @@ class OperatorControllerConstants:
 
 
 class DriveSubsystemConstants:
-  kMaxSpeedMetersPerSecond = 4  # TODO
-  kMaxAngularSpeed = math.radians(720)  # radians per second
+  kMaxSpeedMetersPerSecond = 8  # TODO
+  kMaxAngularSpeed = math.radians(1080)  # radians per second
 
   # WPILib Coordinate System Conventions: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
   kDriveKinematics = SwerveDrive4Kinematics(
