@@ -97,7 +97,7 @@ class SwerveModuleConstants:
 
 
 class ElevatorSubsystemConstants:
-  kManualElevatorSpeed = 0.75
+  kManualElevatorSpeed = 0.9
 
   kS = 0
   kG = 0.3
