@@ -94,7 +94,7 @@ class RobotContainer:
     self.timer.start()
 
   def autonomousPeriodic(self):
-    if not self.timer.hasElapsed(1):
+    if not self.timer.hasElapsed(0.5):
       self.driveSubsystem.drive(0.25, 0, 0, False)
     else:
       self.driveSubsystem.drive(0, 0, 0, False)
