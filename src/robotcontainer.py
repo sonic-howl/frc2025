@@ -6,7 +6,7 @@ from commands2 import Command, RunCommand, cmd
 from commands2.button import CommandXboxController
 from pathplannerlib.auto import AutoBuilder, NamedCommands
 from pathplannerlib.events import EventTrigger
-from wpilib import Field2d, SmartDashboard
+from wpilib import Field2d, SmartDashboard, Timer
 from wpimath.filter import SlewRateLimiter
 
 from constants import (
@@ -89,7 +89,15 @@ class RobotContainer:
     )
 
   def autonomousInit(self):
-    print("auto chosen", self.autoChooser.getSelected())
+    # print("auto chosen", self.autoChooser.getSelected())
+    self.timer = Timer()
+    self.timer.start()
+
+  def autonomousPeriodic(self):
+    if not self.timer.hasElapsed(1):
+      self.driveSubsystem.drive(0.25, 0, 0, False)
+    else:
+      self.driveSubsystem.drive(0, 0, 0, False)
 
   def teleopPeriodic(self):
     ### Manual Elevator Commands ###

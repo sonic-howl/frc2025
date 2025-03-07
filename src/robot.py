@@ -37,6 +37,8 @@ class MyRobot(TimedCommandRobot):
   def autonomousPeriodic(self):
     """This function is called periodically during autonomous."""
 
+    self.robotContainer.autonomousPeriodic()
+
   def teleopInit(self):
     """This function is called once each time the robot enters teleoperated mode."""
 
