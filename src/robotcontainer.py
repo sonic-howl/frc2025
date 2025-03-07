@@ -95,14 +95,18 @@ class RobotContainer:
     self.timer.start()
 
   def teleopInit(self):
-    self.timer.restart()
+    self.timer.reset()
 
   def autonomousPeriodic(self):
     if not self.timer.hasElapsed(1):
       self.driveSubsystem.drive(0.75, 0, 0, False)
       # print("Driving")
+    elif not self.timer.hasElapsed(1.5):
+      self.driveSubsystem.drive(0, 0, 0, False)
+      self.pickupSubsystem.manualDrive(1)
     else:
       self.driveSubsystem.drive(0, 0, 0, False)
+      self.pickupSubsystem.manualDrive(0)
       # print("Stopped")
 
   def teleopPeriodic(self):
