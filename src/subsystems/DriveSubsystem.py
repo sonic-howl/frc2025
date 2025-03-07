@@ -23,7 +23,7 @@ from .vision import LimelightHelpers
 
 
 class DriveSubsystem(Subsystem):
-  fieldRelative = True
+  fieldRelative = False
 
   def __init__(self):
     super().__init__()
