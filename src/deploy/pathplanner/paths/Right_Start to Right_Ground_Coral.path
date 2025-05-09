@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.3704470942590525,
-        "y": 1.7239709112460107
+        "x": 8.49377521880592,
+        "y": 0.7937928535670123
       },
       "isLocked": false,
       "linkedName": "Right_Start"
     },
     {
       "anchor": {
-        "x": 5.25,
-        "y": 2.7
+        "x": 2.0,
+        "y": 2.15
       },
       "prevControl": {
-        "x": 6.162416609577939,
-        "y": 1.9395602968896823
+        "x": 1.2300378937121783,
+        "y": 2.3092080183476615
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef_3"
+      "linkedName": "Right_Ground_Coral"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Start to Reef",
+  "folder": "Start to Ground_Coral",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0
